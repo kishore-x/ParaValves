@@ -12,6 +12,8 @@ declare global {
 // or automatic on Vercel when no DATABASE_URL has been configured.
 const demo = process.env.DEMO_DB === 'pglite' || (!!process.env.VERCEL && !process.env.DATABASE_URL);
 
+export const isDemoDb = demo;
+
 const url = env.DATABASE_URL;
 const isLocal = /@(localhost|127\.0\.0\.1|db)[:/]/.test(url);
 // Managed Postgres (Neon, Supabase, Render…) requires TLS. Enable it unless we

@@ -1,7 +1,7 @@
 import 'server-only';
-import { randomBytes, createHash } from 'node:crypto';
+import { randomBytes, createHash, createHmac, timingSafeEqual } from 'node:crypto';
 import { cookies } from 'next/headers';
-import { query, one } from '../db';
+import { query, one, isDemoDb } from '../db';
 import { env } from '../env';
 
 export const SESSION_COOKIE = 'pv_session';
@@ -20,7 +20,29 @@ export interface AuthUser {
   currentOrgId: string;
 }
 
+// Demo DB (in-memory, per serverless instance): a sessions row would only exist on the
+// instance that created it, so every other instance would bounce the user to /login.
+// Demo sessions are therefore stateless — `userId.expiryMs.hmac` — verifiable anywhere,
+// since the seeded users are identical on every instance.
+function demoSign(payload: string): string {
+  return createHmac('sha256', env.SESSION_SECRET).update(payload).digest('hex');
+}
+
+function demoVerify(token: string): { userId: string; expires: number } | null {
+  const [userId, exp, sig] = token.split('.');
+  if (!userId || !exp || !sig) return null;
+  const want = Buffer.from(demoSign(`${userId}.${exp}`));
+  const got = Buffer.from(sig);
+  if (want.length !== got.length || !timingSafeEqual(want, got)) return null;
+  const expires = Number(exp);
+  return Number.isFinite(expires) ? { userId, expires } : null;
+}
+
 export async function createSession(userId: string, ip?: string, ua?: string): Promise<string> {
+  if (isDemoDb) {
+    const payload = `${userId}.${Date.now() + env.SESSION_TTL_HOURS * 3600 * 1000}`;
+    return `${payload}.${demoSign(payload)}`;
+  }
   const token = randomBytes(32).toString('hex');
   const expires = new Date(Date.now() + env.SESSION_TTL_HOURS * 3600 * 1000);
   await query(
@@ -45,7 +67,7 @@ export async function setSessionCookie(token: string): Promise<void> {
 export async function destroySession(): Promise<void> {
   const c = await cookies();
   const token = c.get(SESSION_COOKIE)?.value;
-  if (token) await query('delete from sessions where token_hash = $1', [hashToken(token)]);
+  if (token && !isDemoDb) await query('delete from sessions where token_hash = $1', [hashToken(token)]);
   c.delete(SESSION_COOKIE);
 }
 
@@ -63,18 +85,30 @@ export async function getCurrentUser(): Promise<AuthUser | null> {
   const c = await cookies();
   const token = c.get(SESSION_COOKIE)?.value;
   if (!token) return null;
-  const row = await one<SessionRow>(
-    `select s.user_id, s.expires_at, s.last_seen_at, u.email, u.name, u.is_global, u.is_active
-     from sessions s join users u on u.id = s.user_id
-     where s.token_hash = $1`,
-    [hashToken(token)],
-  );
+  let row: SessionRow | null;
+  if (isDemoDb) {
+    const t = demoVerify(token);
+    if (!t) return null;
+    const u = await one<Omit<SessionRow, 'expires_at' | 'last_seen_at'>>(
+      'select id as user_id, email, name, is_global, is_active from users where id = $1',
+      [t.userId],
+    );
+    row = u && { ...u, expires_at: new Date(t.expires), last_seen_at: new Date() };
+  } else {
+    row = await one<SessionRow>(
+      `select s.user_id, s.expires_at, s.last_seen_at, u.email, u.name, u.is_global, u.is_active
+       from sessions s join users u on u.id = s.user_id
+       where s.token_hash = $1`,
+      [hashToken(token)],
+    );
+  }
   if (!row || !row.is_active) return null;
   if (new Date(row.expires_at).getTime() < Date.now()) return null;
-  const idleMs = env.SESSION_IDLE_MIN * 60 * 1000;
-  if (Date.now() - new Date(row.last_seen_at).getTime() > idleMs) return null;
-
-  await query('update sessions set last_seen_at = now() where token_hash = $1', [hashToken(token)]);
+  if (!isDemoDb) {
+    const idleMs = env.SESSION_IDLE_MIN * 60 * 1000;
+    if (Date.now() - new Date(row.last_seen_at).getTime() > idleMs) return null;
+    await query('update sessions set last_seen_at = now() where token_hash = $1', [hashToken(token)]);
+  }
 
   const orgs = await query<{ org_id: string }>(
     'select org_id from user_organizations where user_id = $1',
