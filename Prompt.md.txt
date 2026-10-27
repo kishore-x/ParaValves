@@ -1,0 +1,2588 @@
+# PARAVALVES — MASTER PRODUCTION-GRADE ERP  CRM  ENGINEERING PLATFORM
+
+## Complete Product, Architecture & Engineering Specification
+
+You are the principal software architect, staff engineer, database architect, security engineer, DevOps engineer, QA engineer, UX architect and product engineer responsible for building a complete production-grade business management platform for Paravalves.
+
+This is NOT a prototype.
+
+This is NOT a demo-only application.
+
+This is NOT a collection of disconnected CRUD screens.
+
+Build a fully integrated, secure, scalable, auditable and production-ready ERP + CRM + Engineering + Inventory + Procurement + Project + Finance platform that can become Paravalves' primary internal business system.
+
+The existing business uses Holded, Zoho, Excel, Google Drive and manual workflows. The new platform should consolidate the relevant capabilities into one system while adding Paravalves-specific automation.
+
+---
+
+# 1. PRIMARY OBJECTIVE
+
+Build one unified system where the complete business lifecycle is connected
+
+WEBSITE INQUIRY
+→ LEAD
+→ CONTACT  COMPANY
+→ CRM
+→ OPPORTUNITY
+→ QUOTATION
+→ CUSTOMER APPROVAL
+→ SALES ORDER
+→ ENGINEERING
+→ PART NUMBER
+→ DRAWING
+→ DRAWING APPROVAL
+→ BOM
+→ MATERIAL REQUIREMENT
+→ INVENTORY CHECK
+→ PROCUREMENT
+→ PURCHASE ORDER
+→ GOODS RECEIPT  INCOMING
+→ STOCK UPDATE
+→ PROJECT EXECUTION
+→ QUALITY  VERIFICATION
+→ DELIVERY
+→ TAX INVOICE
+→ PAYMENT
+→ FINAL VERIFICATION
+→ PROJECT  ORDER CLOSURE
+
+Every stage must use the same underlying data.
+
+Never make users enter the same information twice when the system already possesses it.
+
+---
+
+# 2. NON-NEGOTIABLE ENGINEERING PRINCIPLES
+
+The system must be
+
+ Production grade
+ Secure
+ Fast
+ Reliable
+ Maintainable
+ Scalable
+ Transactionally correct
+ Auditable
+ Mobiletablet responsive
+ Accessible
+ Observable
+ Testable
+ Failure tolerant
+ Database-consistent
+
+Never implement fake functionality.
+
+Never use placeholder buttons that appear functional but do nothing.
+
+Never hide incomplete functionality behind a polished UI.
+
+Never hard-code business data that belongs in the databaseconfiguration.
+
+Never trust frontend validation as a security mechanism.
+
+Never expose secrets or privileged database credentials to the browser.
+
+Never allow users to bypass business workflow through direct API calls.
+
+Every sensitive operation must be authorized on the server.
+
+---
+
+# 3. ARCHITECTURE
+
+Use a modular architecture with strict separation between
+
+ Presentation layer
+ API  application layer
+ Business logic
+ Database layer
+ Background jobs
+ Filedocument storage
+ Notification system
+ Authenticationauthorization
+ Audit system
+ Reporting
+ Integrations
+
+The architecture must allow individual modules to evolve without creating tightly coupled code.
+
+Prefer domain-driven boundaries over giant files and giant service functions.
+
+Create reusable
+
+ Components
+ Services
+ Validation schemas
+ Database repositories
+ Authorization policies
+ Workflow services
+ Notification services
+ File services
+ Audit services
+
+---
+
+# 4. DATABASE
+
+The database is the source of truth.
+
+Design the schema before implementing business functionality.
+
+Use strong relational modelling.
+
+Every important entity must have
+
+ UUIDinternal ID
+ Human-readable numbercode where applicable
+ Created timestamp
+ Updated timestamp
+ Created by
+ Updated by
+ Status
+ Appropriate foreign keys
+ Appropriate indexes
+ Audit history where required
+
+Use
+
+ Foreign keys
+ Unique constraints
+ Check constraints
+ NOT NULL constraints
+ Appropriate numeric precision
+ Transactions
+ Optimistic concurrency where appropriate
+ Row-level authorization
+ Soft deletion only where businessaudit requirements justify it
+
+Do not solve relational problems in frontend code.
+
+---
+
+# 5. NUMBERING ENGINE
+
+Implement a centralized configurable numbering engine.
+
+Support automated numbering for
+
+ Leads
+ Quotes
+ Sales Orders
+ Purchase Orders
+ Projects
+ Invoices
+ Credit Notes
+ Delivery Notes
+ Drawings
+ Parts
+ Customers
+ Suppliers
+ Material Requirements
+
+Example
+
+LEAD-2026-000001
+QUO-2026-000001
+SO-2026-000001
+PO-2026-000001
+PROJ-2026-000001
+INV-2026-000001
+
+Number generation must be concurrency-safe.
+
+Two simultaneous users must never receive the same number.
+
+Numbering rules must be configurable rather than scattered throughout the codebase.
+
+---
+
+# 6. CRM  LEAD MANAGEMENT
+
+Build complete CRM functionality.
+
+Lead sources
+
+ Website
+ Manual
+ Email
+ Phone
+ Import
+ Referral
+ Other configurable sources
+
+Lead fields
+
+ Lead number
+ Company
+ Contact
+ Email
+ Phone
+ Country
+ Address
+ Product requirement
+ Quantity
+ Description
+ Source
+ Assigned salesperson
+ Priority
+ Status
+ Expected value
+ Expected close date
+ Notes
+ Attachments
+ Activities
+ Follow-ups
+
+Pipeline
+
+NEW
+→ CONTACTED
+→ QUALIFIED
+→ MEETING
+→ QUOTATION
+→ NEGOTIATION
+→ WON
+→ LOST
+
+Pipeline must be visual.
+
+Support dragdrop only when authorized and only when the workflow transition is valid.
+
+---
+
+# 7. WEBSITE INTEGRATION
+
+Build a secure API endpoint for website inquiries.
+
+When the Paravalves website submits a form
+
+Website
+→ API
+→ Lead creation
+→ Duplicate detection
+→ Assignment
+→ Notification
+→ Follow-up task
+
+Automatically create a lead number.
+
+Prevent spam and abuse with
+
+ Validation
+ Rate limiting
+ Bot protection strategy
+ Request logging
+ Duplicate detection
+
+Never allow the public endpoint to access internal data.
+
+---
+
+# 8. COMPANY  CUSTOMER MANAGEMENT
+
+Company profile
+
+ Company name
+ Registration details
+ Country
+ State
+ City
+ Address
+ Postal code
+ GST information
+ Tax treatment
+ Currency
+ Payment terms
+ Language
+ Customer category
+ Sales owner
+ Contacts
+ Documents
+ Activity history
+
+One company may contain multiple contacts.
+
+---
+
+# 9. CONTACT MANAGEMENT
+
+Support
+
+ Name
+ Designation
+ Department
+ Email
+ Phone
+ WhatsAppcontact information where appropriate
+ Language
+ Preferred communication method
+ Notes
+ Activity history
+
+Maintain communicationactivity history.
+
+---
+
+# 10. QUOTATION MANAGEMENT
+
+Users must be able to create quotations without Excel.
+
+Quotation
+
+ Customer
+ Contact
+ Products
+ Part numbers
+ Quantity
+ Unit price
+ Discount
+ Tax
+ Currency
+ Payment terms
+ Delivery terms
+ Validity
+ Shipping
+ Notes
+ Attachments
+
+Automatically generate
+
+ Quote number
+ Professional PDF
+ Revisionversion
+ Activity entry
+
+Support quotation states
+
+DRAFT
+→ INTERNAL REVIEW
+→ APPROVED
+→ SENT
+→ VIEWED
+→ NEGOTIATION
+→ ACCEPTED
+→ REJECTED
+→ EXPIRED
+
+Do not allow invalid state transitions.
+
+---
+
+# 11. QUOTE → SALES ORDER
+
+One-click conversion.
+
+When quotation is accepted
+
+Create Sales Order automatically.
+
+Carry forward all applicable information.
+
+Never force users to re-enter
+
+ Customer
+ Products
+ Quantity
+ Price
+ Taxes
+ Terms
+ Delivery information
+
+Maintain traceability
+
+Quote → Order.
+
+---
+
+# 12. SALES ORDER MANAGEMENT
+
+Sales Order must contain
+
+ Order number
+ Customer
+ Quote reference
+ Products
+ Part numbers
+ Quantity
+ Price
+ Tax
+ Delivery date
+ Engineering requirements
+ Material requirements
+ Project
+ Documents
+ Status
+ Activities
+
+Status example
+
+ORDER CONFIRMED
+→ ENGINEERING
+→ DRAWING APPROVAL
+→ MATERIAL CHECK
+→ PROCUREMENT
+→ READY
+→ EXECUTION
+→ QC
+→ DELIVERY
+→ INVOICING
+→ CLOSED
+
+The exact workflow must be configurable.
+
+---
+
+# 13. PRODUCT MASTER
+
+Create a proper product master.
+
+Each product can have
+
+ Product code
+ Part number
+ Product category
+ Description
+ Unit
+ Material
+ Dimensions
+ Specifications
+ Tax classification
+ HSNSAC
+ Standard cost
+ Selling price
+ Supplier information
+ BOM
+ Drawings
+ Revision
+ Documents
+ Stock rules
+
+Prevent accidental duplicate products.
+
+---
+
+# 14. AUTOMATIC PART NUMBER ENGINE
+
+This is a critical Paravalves feature.
+
+Build a configurable part-number generation engine.
+
+Part numbers may be based on
+
+ Product family
+ Product type
+ Size
+ Material
+ Configuration
+ Customer-specific attributes
+ Revision
+
+The exact formula must be configurable.
+
+Requirements
+
+ Automatic generation
+ Uniqueness
+ Collision prevention
+ Revision management
+ Search
+ History
+ Audit trail
+
+Never silently overwrite an existing part number.
+
+---
+
+# 15. ENGINEERING MANAGEMENT
+
+Engineering module must manage
+
+ Engineering requests
+ Products
+ Specifications
+ BOM
+ Drawings
+ Revisions
+ Engineering tasks
+ Approvals
+ Technical documents
+ Customer specifications
+
+Engineering status must be visible to Sales, Project Management and authorized Management users.
+
+---
+
+# 16. DRAWING MANAGEMENT
+
+Support
+
+ Drawing number
+ Revision
+ File upload
+ Preview where supported
+ Version history
+ Uploaded by
+ Reviewed by
+ Approved by
+ Approval timestamp
+ Comments
+ Customer approval
+ Internal approval
+
+Lifecycle
+
+DRAFT
+→ REVIEW
+→ INTERNAL APPROVAL
+→ CUSTOMER APPROVAL
+→ RELEASED
+
+Never destroy previous revisions.
+
+---
+
+# 17. WORKFLOW GATES
+
+Business-critical transitions must have gates.
+
+Example
+
+An order requiring drawing approval cannot proceed to the next engineering stage until the required drawing is approved.
+
+An order requiring material cannot be considered ready when required material is unavailable.
+
+A project cannot be closed until mandatory verification steps are completed.
+
+Do not implement these as frontend-only restrictions.
+
+Enforce them at the applicationdatabasebusiness-rule level.
+
+---
+
+# 18. BOM
+
+Support multi-level Bills of Materials where necessary.
+
+BOM contains
+
+ Parent product
+ Components
+ Quantity per unit
+ Unit
+ Material
+ Substitute component where applicable
+ Revision
+ Effective date
+ Status
+
+When an order is created, calculate material requirements based on the applicable BOM revision.
+
+---
+
+# 19. INVENTORY
+
+Build real inventory management.
+
+Track
+
+ On-hand stock
+ Available stock
+ Reserved stock
+ Incoming stock
+ Allocated stock
+ Damaged stock
+ Rejected stock
+ Minimum stock
+ Reorder point
+ Stock movements
+
+Every stock change must create an auditable stock movement.
+
+Never update stock through arbitrary direct frontend mutations.
+
+---
+
+# 20. INVENTORY INTELLIGENCE
+
+The system must understand
+
+Required
+15
+
+Available
+13
+
+Incoming
+2
+
+Shortage
+0
+
+Expected availability
+Tomorrow
+
+Display this visually.
+
+If
+
+Required = 15
+Available = 10
+Incoming = 2
+
+Then
+
+Shortage = 3
+
+Automatically createdisplay a material requirement.
+
+---
+
+# 21. STOCK RESERVATION
+
+When a confirmed order requires stock
+
+Reserve appropriate quantities.
+
+Support
+
+ Reservation
+ Release
+ Reallocation
+ Partial availability
+ Multiple orders competing for inventory
+
+Prevent overselling through transactional lockingconcurrency-safe operations.
+
+---
+
+# 22. MATERIAL REQUIREMENT PLANNING
+
+Automatically calculate
+
+ Required quantity
+ Available quantity
+ Reserved quantity
+ Incoming quantity
+ Net shortage
+
+Example
+
+ Component    Required  Available  Incoming  Shortage 
+ -----------  -------  --------  -------  ------- 
+ Component A        15         10         2         3 
+
+Generate procurement recommendations.
+
+---
+
+# 23. PROCUREMENT
+
+Workflow
+
+MATERIAL REQUIREMENT
+→ PURCHASE REQUEST
+→ APPROVAL
+→ PURCHASE ORDER
+→ SUPPLIER CONFIRMATION
+→ DISPATCH
+→ RECEIVING
+→ INSPECTION
+→ STOCK
+
+Purchase order
+
+ PO number
+ Supplier
+ Productsmaterials
+ Quantity
+ Price
+ Tax
+ Delivery date
+ Terms
+ Documents
+ Status
+
+---
+
+# 24. SUPPLIER MANAGEMENT
+
+Supplier profile
+
+ Company
+ Contact
+ Address
+ Tax details
+ Payment terms
+ Products supplied
+ Historical prices
+ Purchase history
+ Delivery performance
+ Documents
+ Ratingperformance indicators
+
+---
+
+# 25. GOODS RECEIPT  INCOMING MATERIAL
+
+When material arrives
+
+Create Goods Receipt  Incoming Report.
+
+Record
+
+ PO
+ Supplier
+ Material
+ Ordered quantity
+ Received quantity
+ Accepted quantity
+ Rejected quantity
+ Damaged quantity
+ Batchlot where applicable
+ Serial number where applicable
+ Inspection
+ Date
+ User
+
+Only accepted quantities should increase available stock according to business rules.
+
+---
+
+# 26. PROJECT MANAGEMENT
+
+Orders that require execution should automatically create projects.
+
+Project contains
+
+ Project number
+ Customer
+ Sales order
+ Engineering
+ Procurement
+ Tasks
+ Milestones
+ Documents
+ Team
+ Timeline
+ Budget
+ Status
+ Progress
+ Risks
+ Delays
+
+---
+
+# 27. VISUAL PROJECT MANAGEMENT
+
+Provide
+
+ Kanban
+ Timeline
+ Gantt chart
+ Milestones
+ Progress indicators
+ Dependency visualization
+ Status indicators
+ Delay indicators
+
+Example
+
+ENGINEERING      ██████████ 100%
+DRAWING          ██████████ 100%
+PROCUREMENT      ███████░░░ 70%
+PRODUCTION       ████░░░░░░ 40%
+QC               ░░░░░░░░░░ 0%
+DELIVERY         ░░░░░░░░░░ 0%
+
+Do not make project tracking primarily text-based.
+
+---
+
+# 28. MY TASKS
+
+Each user gets a personal task dashboard.
+
+Categories
+
+ Overdue
+ Today
+ Upcoming
+ Waiting
+ Completed
+
+Tasks can originate automatically from workflows.
+
+Example
+
+New lead
+→ Contact task.
+
+Quote sent
+→ Follow-up task.
+
+Drawing submitted
+→ Approval task.
+
+Material shortage
+→ Procurement task.
+
+Project delay
+→ Project manager task.
+
+---
+
+# 29. AUTOMATION ENGINE
+
+Implement centralized business automation.
+
+Examples
+
+IF new lead
+→ create lead
+→ assign user
+→ create follow-up
+→ notify salesperson
+
+IF quote accepted
+→ create sales order
+
+IF sales order created
+→ create project where applicable
+→ initiate engineering
+→ calculate materials
+
+IF stock shortage
+→ create material requirement
+→ notify procurement
+
+IF material received
+→ update inventory
+→ recalculate shortage
+
+IF drawing approved
+→ unlock next workflow stage
+
+IF deadline approaching
+→ notify responsible user
+
+IF invoice overdue
+→ create payment follow-up
+
+Automation must be idempotent.
+
+Repeated events must not create duplicate recordstasks.
+
+---
+
+# 30. NOTIFICATION SYSTEM
+
+Support in-app notifications.
+
+Categories
+
+ New lead
+ Assignment
+ Approval
+ Material shortage
+ Purchase order
+ Delivery delay
+ Project delay
+ Payment overdue
+ Task overdue
+ Drawing approval
+ System alerts
+
+Notifications must be persisted.
+
+Users should be able to mark notifications as read.
+
+---
+
+# 31. EMAIL AUTOMATION
+
+Implement an email service abstraction.
+
+Support
+
+ New inquiry notification
+ Quote email
+ Order confirmation
+ Drawing approval request
+ Purchase order
+ Delivery communication
+ Invoice email
+ Payment reminder
+
+Emails must be templated and configurable.
+
+Log
+
+ Recipient
+ Subject
+ Event
+ Sent time
+ Status
+ Failure reason
+
+---
+
+# 32. INDIA TAX  GST
+
+Support Indian taxation correctly.
+
+Invoice data should support
+
+ GSTIN
+ HSNSAC
+ CGST
+ SGST
+ IGST
+ Taxable value
+ Tax rate
+ Tax amount
+ Total
+ Place of supply
+ Invoice number
+ Invoice date
+ Payment terms
+
+Do not hard-code tax logic into UI components.
+
+Create a tax engineconfiguration layer.
+
+---
+
+# 33. EXPORT INVOICING
+
+Support international customers.
+
+Include configurable
+
+ Currency
+ Customer country
+ Export details
+ International billing information
+ Applicable tax treatment
+ Export invoice documents
+
+IndiaSpain workflows must be supported without mixing country-specific data incorrectly.
+
+---
+
+# 34. INVOICE MANAGEMENT
+
+Invoice lifecycle
+
+DRAFT
+→ APPROVAL
+→ ISSUED
+→ PARTIALLY PAID
+→ PAID
+→ OVERDUE
+→ CANCELLEDCREDITED
+
+Support
+
+ Invoice PDF
+ Line items
+ Taxes
+ Discounts
+ Payment terms
+ Due date
+ Payment tracking
+ Credit notes
+ References
+
+---
+
+# 35. PAYMENTS  RECEIVABLES
+
+Track
+
+ Invoice amount
+ Paid amount
+ Outstanding amount
+ Due date
+ Payment date
+ Payment method
+ Reference
+ Partial payment
+ Payment status
+
+Dashboard must highlight overdue receivables.
+
+---
+
+# 36. ACCOUNTING FOUNDATION
+
+Build a proper foundation for
+
+ Chart of accounts
+ Accounts receivable
+ Accounts payable
+ Sales
+ Purchases
+ Expenses
+ Tax
+ Payments
+ Financial reporting
+
+Avoid claiming full accounting unless the implemented accounting model actually supports the required accounting controls.
+
+---
+
+# 37. EXPENSE MANAGEMENT
+
+Support
+
+ Expense entry
+ Category
+ Employeeuser
+ Amount
+ Tax
+ Date
+ Receipt
+ Approval
+ Payment status
+
+---
+
+# 38. DOCUMENT MANAGEMENT
+
+Every major entity should have documents.
+
+Examples
+
+Customer
+→ contracts
+→ certificates
+
+Order
+→ PO
+→ specifications
+→ drawings
+
+Project
+→ technical files
+→ reports
+
+Invoice
+→ invoice documents
+
+Implement
+
+ Upload
+ Download
+ Preview where supported
+ Versioning
+ Metadata
+ Permissions
+ Audit trail
+
+---
+
+# 39. INDIA  SPAIN DATA ACCESS
+
+Build organizationaltenant-like access boundaries.
+
+Example
+
+INDIA
+
+ India users
+ India customers
+ India projects
+ India documents
+
+SPAIN
+
+ Spain users
+ Spain customers
+ Spain projects
+ Spain documents
+
+Global management roles may access authorized global data.
+
+Do not rely on hiding UI elements.
+
+Enforce access on backenddatabase policies.
+
+---
+
+# 40. RBAC
+
+Roles should be configurable.
+
+Examples
+
+ Super Admin
+ Owner
+ Management
+ Sales
+ Engineering
+ Procurement
+ Inventory
+ Accounts
+ Project Manager
+ Quality
+ India Team
+ Spain Team
+
+Permissions should support
+
+ View
+ Create
+ Edit
+ Deletearchive
+ Approve
+ Export
+ Manage
+ Financial access
+
+Use least privilege.
+
+---
+
+# 41. AUDIT LOGGING
+
+Record important actions
+
+ Login
+ Logout
+ Record creation
+ Record updates
+ Status transitions
+ Approvals
+ Drawing revisions
+ Stock adjustments
+ Invoice changes
+ Payment changes
+ Permission changes
+ Data exports
+ Document access where required
+
+Audit records should contain
+
+ Actor
+ Action
+ Entity
+ Entity ID
+ Timestamp
+ Relevant beforeafter information
+ Requestcontext metadata where appropriate
+
+Audit logs must not be casually editabledeletable.
+
+---
+
+# 42. GLOBAL SEARCH
+
+Build fast global search across
+
+ Leads
+ Companies
+ Contacts
+ Quotes
+ Orders
+ Projects
+ Products
+ Part numbers
+ Drawings
+ Purchase orders
+ Invoices
+ Payments
+
+Example
+
+Search
+
+SO-2026-0012
+
+and show the complete connected business chain.
+
+---
+
+# 43. ORDER 360 VIEW
+
+Build a powerful Order 360 page.
+
+One screen should show
+
+CUSTOMER
+ORDER
+QUOTE
+ENGINEERING
+PART NUMBER
+DRAWING
+BOM
+MATERIAL
+INVENTORY
+PROCUREMENT
+PROJECT
+TASKS
+DELIVERY
+INVOICE
+PAYMENT
+DOCUMENTS
+AUDIT HISTORY
+
+This should become one of the signature features of the platform.
+
+---
+
+# 44. CUSTOMER 360 VIEW
+
+Customer page should show
+
+ Leads
+ Contacts
+ Quotes
+ Orders
+ Projects
+ Invoices
+ Payments
+ Documents
+ Communication
+ Activity history
+
+---
+
+# 45. MANAGEMENT DASHBOARD
+
+Management dashboard
+
+SALES
+
+ Leads
+ Opportunities
+ Quotes
+ Orders
+ Revenue
+
+OPERATIONS
+
+ Active projects
+ Delayed projects
+ Engineering workload
+ Material shortages
+
+INVENTORY
+
+ Available
+ Reserved
+ Incoming
+ Low stock
+ Shortages
+
+FINANCE
+
+ Revenue
+ Purchases
+ Expenses
+ Receivables
+ Payables
+ ProfitLoss
+
+TASKS
+
+ Overdue
+ Today
+ Upcoming
+
+Dashboard should be configurable and performant.
+
+---
+
+# 46. REPORTING
+
+Reports
+
+Sales
+
+ Lead conversion
+ Sales pipeline
+ Sales by customer
+ Sales by product
+ Sales by period
+
+Inventory
+
+ Stock
+ Movement
+ Consumption
+ Shortage
+ Incoming
+ Low stock
+
+Procurement
+
+ Purchase volume
+ Supplier performance
+ Pending POs
+ Delayed POs
+
+Projects
+
+ Completion
+ Delays
+ Cycle time
+ Profitability
+
+Finance
+
+ Revenue
+ Expenses
+ Receivables
+ Payables
+ ProfitLoss
+ Tax
+
+All reports must use indexedquery-efficient data access.
+
+---
+
+# 47. PERFORMANCE
+
+Performance is a first-class requirement.
+
+Do not
+
+ Fetch entire tables unnecessarily
+ Perform N+1 queries
+ Load huge datasets into the browser
+ Recalculate expensive reports on every render
+ Store derived data inconsistently
+ Make sequential network calls when parallel calls are possible
+
+Implement
+
+ Pagination
+ Filtering
+ Sorting
+ Server-side querying
+ Appropriate indexes
+ Caching where beneficial
+ Query optimization
+ Lazy loading
+ Background jobs
+ Debounced search
+ Optimistic UI only where safe
+ Database transactions
+
+Use database query plans to identify expensive queries.
+
+---
+
+# 48. CONCURRENCY  DATA INTEGRITY
+
+The system must work correctly when multiple employees perform operations simultaneously.
+
+Examples
+
+Two users cannot reserve the same inventory.
+
+Two users cannot generate the same document number.
+
+Two users cannot approve the same workflow incorrectly.
+
+Two users editing the same record must not silently overwrite one another.
+
+Use
+
+ Transactions
+ Row locking where appropriate
+ Unique constraints
+ Optimistic concurrencyversion fields
+ Idempotency keys
+ Atomic updates
+
+---
+
+# 49. BACKGROUND JOBS
+
+Long-running work must not block HTTP requests.
+
+Use background jobs for
+
+ Emails
+ PDF generation where heavy
+ Notifications
+ Report generation
+ Import processing
+ Large exports
+ Stock recalculation
+ Automated follow-ups
+ Scheduled reminders
+
+Jobs must support
+
+ Retry
+ Backoff
+ Failure tracking
+ Idempotency
+ Dead-letter handling where appropriate
+
+---
+
+# 50. FILE SECURITY
+
+All uploaded files must be validated.
+
+Check
+
+ File type
+ File size
+ Filename
+ MIME type
+ Authorization
+ Storage permissions
+
+Never expose private documents through unrestricted public URLs.
+
+Use signedprivate access where appropriate.
+
+---
+
+# 51. SECURITY
+
+Implement
+
+ Secure authentication
+ Strong session management
+ RBAC
+ Backend authorization
+ Database authorization policies
+ Input validation
+ Output validation where needed
+ Rate limiting
+ CSRF protection where applicable
+ Secure headers
+ XSS prevention
+ SQL injection prevention
+ File upload protection
+ Secret management
+ Encryption in transit
+ Encryption at rest where supported
+ Audit logs
+ Password security
+ Accountsession controls
+
+Never expose
+
+ Service-role keys
+ Database credentials
+ Private secrets
+ Internal infrastructure credentials
+
+in frontend code.
+
+---
+
+# 52. API SECURITY
+
+Every API route must explicitly determine
+
+1. Who is calling
+2. Are they authenticated
+3. Are they authorized
+4. Which organizationcountry do they belong to
+5. Can they access this specific record
+6. Is the operation permitted
+7. Is the input valid
+
+Never rely on the frontend to answer these questions.
+
+---
+
+# 53. VALIDATION
+
+Use centralized schemas.
+
+Validate
+
+ Forms
+ API requests
+ Imports
+ File metadata
+ Tax fields
+ Quantities
+ Prices
+ Status transitions
+ IDs
+ Dates
+ Currency
+ Permissions
+
+Return useful validation errors.
+
+---
+
+# 54. IMPORT  MIGRATION
+
+Build import tooling for existing
+
+ Excel data
+ Customers
+ Contacts
+ Products
+ Part numbers
+ Inventory
+ Quotes where required
+ Orders where required
+ Suppliers
+
+Import pipeline
+
+UPLOAD
+→ VALIDATE
+→ PREVIEW
+→ ERROR REPORT
+→ CONFIRM
+→ IMPORT
+→ AUDIT
+
+Never blindly insert spreadsheet data.
+
+Detect
+
+ Duplicates
+ Invalid fields
+ Missing required fields
+ Invalid references
+ Invalid tax information
+
+---
+
+# 55. HOLDed  ZOHO REPLACEMENT STRATEGY
+
+The platform should cover the relevant business capabilities currently being handled by Holded and Zoho
+
+CRM
+Sales
+Quotes
+Orders
+Purchasing
+Inventory
+Projects
+Invoices
+Expenses
+Financial tracking
+Contacts
+Documents
+Reporting
+
+But do NOT simply copy their UI.
+
+Design a workflow optimized for Paravalves.
+
+---
+
+# 56. UX  UI
+
+The interface should feel like a serious modern enterprise product.
+
+Requirements
+
+ Clean
+ Minimal
+ Fast
+ Professional
+ Responsive
+ Desktop optimized
+ Tablet optimized
+ Mobile usable
+ Keyboard accessible where appropriate
+
+Avoid
+
+ Excessive modals
+ Giant forms
+ Unnecessary page reloads
+ Clutter
+ Random colors
+ Inconsistent components
+ Inconsistent terminology
+
+Use consistent
+
+ Typography
+ Spacing
+ Components
+ Status indicators
+ Buttons
+ Tables
+ Forms
+ Empty states
+ Loading states
+ Error states
+
+---
+
+# 57. RESPONSIVE DESIGN
+
+Must work properly on
+
+ Desktop
+ Laptop
+ Tablet
+ Mobile
+
+Important operational screens such as
+
+ Dashboard
+ CRM
+ Order
+ Inventory
+ Project
+ Tasks
+
+must remain usable on tablets.
+
+---
+
+# 58. ERROR HANDLING
+
+Every important operation needs proper failure handling.
+
+Do not show
+
+Something went wrong.
+
+Instead provide useful errors.
+
+Example
+
+Unable to reserve 15 units because only 12 are currently available. 3 units are already reserved by SO-2026-0021.
+
+Errors should be
+
+ Logged
+ Traceable
+ Safe
+ User-friendly
+
+Never expose internal stack traces to users.
+
+---
+
+# 59. OBSERVABILITY
+
+Production system must provide
+
+ Structured logs
+ Error tracking
+ Request tracing where appropriate
+ Job monitoring
+ Database monitoring
+ Performance metrics
+ Authenticationsecurity event logs
+ Health checks
+
+Create
+
+`health`
+
+and appropriate readinessliveness checks.
+
+---
+
+# 60. BACKUP  RECOVERY
+
+Production deployment must have
+
+ Automated database backups
+ Backup retention policy
+ Recovery procedure
+ Disaster recovery documentation
+ Storage backup strategy
+ Restore testing
+
+A backup that has never been restoredtested should not be considered reliable.
+
+---
+
+# 61. DEPLOYMENT
+
+Use proper environments
+
+DEVELOPMENT
+→ STAGING
+→ PRODUCTION
+
+Never develop directly against production.
+
+Environment variables must be separated.
+
+Secrets must never be committed to Git.
+
+Production deployment should be reproducible.
+
+---
+
+# 62. CICD
+
+Implement
+
+ Lint
+ Type checking
+ Unit tests
+ Integration tests
+ Build
+ Migration checks
+ Security checks
+ Deployment
+
+A pull request should not be considered production-ready when testsbuildtype checking fail.
+
+---
+
+# 63. TESTING
+
+Build tests for
+
+### Unit
+
+Business logic.
+
+### Integration
+
+Database + services.
+
+### API
+
+Authentication and authorization.
+
+### Workflow
+
+Lead → Quote → Order.
+
+Order → Engineering.
+
+Order → Inventory.
+
+Inventory → Procurement.
+
+Procurement → Receiving.
+
+Invoice → Payment.
+
+### Security
+
+Unauthorized access attempts.
+
+### Concurrency
+
+Stock reservation and numbering.
+
+### E2E
+
+Critical user journeys.
+
+---
+
+# 64. CRITICAL E2E TEST
+
+The following must work automatically
+
+1. Website submits inquiry.
+2. Lead created.
+3. Lead assigned.
+4. Follow-up created.
+5. Quote created.
+6. Quote generated.
+7. Quote accepted.
+8. Sales order created.
+9. Project created.
+10. Part number generated.
+11. Drawing uploaded.
+12. Drawing approved.
+13. BOM processed.
+14. Inventory checked.
+15. Shortage calculated.
+16. Procurement requirement created.
+17. Purchase order created.
+18. Material received.
+19. Inventory updated.
+20. Project updated.
+21. QC completed.
+22. Delivery completed.
+23. Invoice generated.
+24. Payment recorded.
+25. Final verification completed.
+26. Project closed.
+
+This entire chain must be tested.
+
+---
+
+# 65. AUDITABLE WORKFLOW
+
+Every automated action must have traceability.
+
+Example
+
+SO-2026-0012
+
+Created
+User A
+
+Engineering initiated
+System
+
+Part number generated
+System
+
+Drawing approved
+User B
+
+Material shortage detected
+System
+
+Purchase requirement
+System
+
+Material received
+User C
+
+Invoice generated
+System
+
+Final approval
+User D
+
+---
+
+# 66. NO DUPLICATE DATA
+
+A fundamental principle
+
+If information already exists, reuse it.
+
+Example
+
+Lead
+
+ABC Industries
+
+When converted
+
+Customer = existing ABC Industries
+
+When quote created
+
+Customer = ABC Industries
+
+When order created
+
+Customer = ABC Industries
+
+When project created
+
+Customer = ABC Industries
+
+Never create five separate copies of ABC Industries.
+
+Use relational references.
+
+---
+
+# 67. BUSINESS RULE ENGINE
+
+Business rules should be centralized.
+
+Examples
+
+ Cannot close order when mandatory requirements incomplete.
+ Cannot proceed without drawing approval where required.
+ Cannot reserve unavailable inventory.
+ Cannot invoice invalid order states.
+ Cannot approve one's own restricted approval where segregation is required.
+ Cannot modify released engineering revision without creating a new revision.
+
+Avoid scattering business rules throughout UI components.
+
+---
+
+# 68. STATUS MACHINE
+
+Every major entity must have explicit state transitions.
+
+Do not allow arbitrary status changes.
+
+Implement workflow transition validation.
+
+Every transition should record
+
+ Previous state
+ New state
+ Actorsystem
+ Timestamp
+ Reason where applicable
+
+---
+
+# 69. GLOBAL ACTIVITY TIMELINE
+
+Customers, leads, orders and projects should have an activity timeline.
+
+Show
+
+ Calls
+ Emails
+ Meetings
+ Notes
+ Status changes
+ Approvals
+ Documents
+ Tasks
+ System events
+
+This creates a complete business history.
+
+---
+
+# 70. DASHBOARD ATTENTION REQUIRED
+
+Create a high-value management widget
+
+ATTENTION REQUIRED
+
+ Leads not contacted
+ Quotes awaiting follow-up
+ Drawing approvals
+ Material shortages
+ Delayed POs
+ Delayed projects
+ Overdue tasks
+ Overdue invoices
+ Pending approvals
+
+This should be actionable.
+
+Clicking an alert should take the user directly to the relevant record.
+
+---
+
+# 71. ORDER 360 SIGNATURE EXPERIENCE
+
+This is one of the most important screens.
+
+When management opens an order, they should understand the entire situation immediately.
+
+Example
+
+ORDER
+SO-2026-0012
+
+CUSTOMER
+ABC Industries
+
+QUANTITY
+15
+
+ENGINEERING
+✓ Complete
+
+DRAWING
+✓ Approved
+
+MATERIAL
+13  15 Available
+
+INCOMING
+2 Tomorrow
+
+PROJECT
+72%
+
+PROCUREMENT
+PO-2026-0091
+
+DELIVERY
+Tomorrow
+
+INVOICE
+Pending
+
+PAYMENT
+Pending
+
+RISKS
+None
+
+The user should not need to visit 10 modules to understand the order.
+
+---
+
+# 72. DATA VISUALIZATION
+
+Use visualization where it provides operational value
+
+ CRM Kanban
+ Gantt
+ Project timeline
+ Inventory status
+ Material requirement
+ Revenue graphs
+ Sales funnel
+ Financial charts
+ Project health
+ Task workload
+
+Do not create charts merely for decoration.
+
+---
+
+# 73. INTERNATIONALIZATION FOUNDATION
+
+The platform should be architected to support
+
+ India
+ Spain
+ Multiple currencies
+ Multiple languages
+ Country-specific tax rules
+ Time zones
+ Date formats
+
+Do not hard-code India-specific assumptions into the entire application.
+
+---
+
+# 74. TIME  DATE HANDLING
+
+Store timestamps consistently.
+
+Render according to usercompany timezone.
+
+Avoid timezone bugs in
+
+ Deadlines
+ Follow-ups
+ Meetings
+ Project schedules
+ Expected delivery
+ Invoice due dates
+ Automated notifications
+
+---
+
+# 75. CURRENCY
+
+Never use floating-point arithmetic for financial values.
+
+Use proper decimalnumeric handling.
+
+Support
+
+ Currency
+ Exchange rate where required
+ Base currency
+ Transaction currency
+
+---
+
+# 76. FINANCIAL INTEGRITY
+
+Money calculations must happen server-side.
+
+Do not trust pricestaxestotals supplied by the browser.
+
+Recalculate critical totals.
+
+Use deterministic rounding rules.
+
+---
+
+# 77. EXPORTS
+
+Support authorized export of
+
+ Leads
+ Customers
+ Products
+ Inventory
+ Orders
+ Projects
+ Invoices
+ Reports
+
+Exports must respect user permissions and organizational boundaries.
+
+---
+
+# 78. ADMINISTRATION
+
+Create admin configuration for
+
+ Users
+ Roles
+ Permissions
+ Countries
+ Currencies
+ Taxes
+ Numbering
+ Product categories
+ Lead sources
+ Pipeline statuses
+ Order statuses
+ Project statuses
+ Workflow rules
+ Notification settings
+ Email templates
+
+---
+
+# 79. SYSTEM SETTINGS
+
+Avoid hard-coded configuration.
+
+Business administrators should be able to configure appropriate
+
+ Tax rules
+ Number prefixes
+ Default payment terms
+ Workflow requirements
+ Approval rules
+ Inventory thresholds
+ Notification rules
+
+---
+
+# 80. SECURITY REVIEW REQUIREMENT
+
+Before considering the system complete, perform a security review covering
+
+ Authentication
+ Authorization
+ RBAC
+ Database policies
+ API access
+ File access
+ Input validation
+ Injection
+ XSS
+ CSRF where applicable
+ Rate limiting
+ Session security
+ Secrets
+ Logging
+ Data exposure
+ Export permissions
+ Cross-country data isolation
+ Privilege escalation
+
+Attempt unauthorized access during testing.
+
+Fix every discovered vulnerability.
+
+---
+
+# 81. PERFORMANCE REVIEW REQUIREMENT
+
+Before production
+
+Measure
+
+ Initial page load
+ API latency
+ Database query latency
+ Search
+ Dashboard
+ Inventory
+ Order 360
+ ProjectGantt
+ Reports
+ Large table pagination
+
+Identify slow queries.
+
+Add appropriate indexes.
+
+Do not blindly add indexes everywhere.
+
+---
+
+# 82. DATABASE QUALITY REQUIREMENT
+
+Before production
+
+Review every table.
+
+Check
+
+ Foreign keys
+ Unique constraints
+ Nullability
+ Indexes
+ Cascades
+ Transactions
+ RLSauthorization
+ Audit requirements
+ Soft deletion
+ Data retention
+
+No orphan records.
+
+No duplicate business identifiers.
+
+No inconsistent stock.
+
+No impossible financial states.
+
+---
+
+# 83. PRODUCTION READINESS CHECKLIST
+
+Do not declare the system complete until all are satisfied
+
+[ ] Authentication works
+[ ] RBAC works
+[ ] Countryorganization isolation works
+[ ] CRM works
+[ ] Website integration works
+[ ] Quotes work
+[ ] Quote → Order works
+[ ] Product master works
+[ ] Part numbers work
+[ ] Engineering works
+[ ] Drawings work
+[ ] Approvals work
+[ ] BOM works
+[ ] Inventory works
+[ ] Reservations work
+[ ] Material planning works
+[ ] Procurement works
+[ ] Purchase orders work
+[ ] Goods receiving works
+[ ] Projects work
+[ ] Gantt works
+[ ] Tasks work
+[ ] Notifications work
+[ ] Email automation works
+[ ] GST invoices work
+[ ] Export invoices work
+[ ] Payments work
+[ ] Expenses work
+[ ] Financial reports work
+[ ] Documents work
+[ ] Audit logs work
+[ ] Search works
+[ ] Dashboards work
+[ ] Reports work
+[ ] Imports work
+[ ] Error handling works
+[ ] Logging works
+[ ] Monitoring works
+[ ] Backups configured
+[ ] Restore tested
+[ ] CICD works
+[ ] Unit tests pass
+[ ] Integration tests pass
+[ ] E2E tests pass
+[ ] Security review passed
+[ ] Performance review passed
+[ ] Production deployment verified
+
+---
+
+# 84. DEVELOPMENT METHODOLOGY
+
+Do not attempt to build the entire platform in one uncontrolled pass.
+
+Follow this order
+
+PHASE 0
+Architecture + requirements + schema
+
+PHASE 1
+Authentication + organizations + users + permissions
+
+PHASE 2
+CRM + customers + contacts + leads
+
+PHASE 3
+Quotation + sales orders
+
+PHASE 4
+Products + part numbering
+
+PHASE 5
+Engineering + drawings + approvals
+
+PHASE 6
+BOM + inventory
+
+PHASE 7
+Material planning + procurement
+
+PHASE 8
+Projects + tasks + Gantt
+
+PHASE 9
+Invoices + GST + payments
+
+PHASE 10
+Documents + notifications + automation
+
+PHASE 11
+Dashboards + reports
+
+PHASE 12
+Migrationimport
+
+PHASE 13
+Security hardening
+
+PHASE 14
+Performance optimization
+
+PHASE 15
+Full QA + E2E
+
+PHASE 16
+Production deployment
+
+Do not move forward while foundational architecture is broken.
+
+---
+
+# 85. IMPLEMENTATION RULE
+
+For every module
+
+1. Understand requirements.
+2. Design database.
+3. Design permissions.
+4. Design APIsservices.
+5. Implement business rules.
+6. Implement UI.
+7. Implement validation.
+8. Implement audit logging.
+9. Implement error handling.
+10. Write tests.
+11. Test edge cases.
+12. Review security.
+13. Review performance.
+14. Only then mark complete.
+
+---
+
+# 86. DEFINITION OF DONE
+
+A feature is NOT complete because
+
+ The page exists.
+ The button exists.
+ The form submits.
+ The database row appears.
+
+A feature is complete only when
+
+ UI works.
+ API works.
+ Database is correct.
+ Authorization works.
+ Validation works.
+ Business rules work.
+ Errors are handled.
+ Audit trail works where required.
+ Edge cases work.
+ Tests exist.
+ Performance is acceptable.
+ It integrates correctly with dependent workflows.
+
+---
+
+# 87. CODE QUALITY
+
+Prefer
+
+ Small modules
+ Clear naming
+ Strong typing
+ Reusable services
+ Explicit business logic
+ Testable functions
+ Clear interfaces
+ Consistent error handling
+
+Avoid
+
+ Giant components
+ Giant API handlers
+ Duplicate logic
+ Magic numbers
+ Hard-coded statuses
+ Hard-coded business rules
+ Copy-paste code
+ Hidden side effects
+ Unnecessary abstractions
+
+---
+
+# 88. DOCUMENTATION
+
+Maintain documentation for
+
+ Architecture
+ Database
+ API
+ Authentication
+ Authorization
+ Workflows
+ Environment variables
+ Deployment
+ Backup
+ Restore
+ Migrations
+ Integrations
+ Business rules
+ Troubleshooting
+
+---
+
+# 89. FINAL PRODUCT EXPERIENCE
+
+When the owner logs in, the system should answer
+
+### What is happening in my company
+
+within seconds.
+
+They should see
+
+Sales
+→ What leads came in
+
+Orders
+→ What orders are active
+
+Engineering
+→ What needs approval
+
+Inventory
+→ What is available
+
+Materials
+→ What is missing
+
+Procurement
+→ What is coming
+
+Projects
+→ What is delayed
+
+Finance
+→ What is owed
+
+Tasks
+→ What needs attention
+
+---
+
+# 90. THE CORE PRODUCT PHILOSOPHY
+
+The system must not merely RECORD business activity.
+
+It must UNDERSTAND business activity.
+
+Bad
+
+Stock = 13.
+
+Good
+
+15 required. 13 available. 2 incoming tomorrow. Order expected to be fulfilled tomorrow.
+
+Bad
+
+Lead created.
+
+Good
+
+New website lead received 18 minutes ago. Assigned to Sales. No contact yet. Follow-up due in 5 hours.
+
+Bad
+
+Project 72%.
+
+Good
+
+Project is 72% complete. Engineering and drawing are complete. Procurement is waiting for 2 components. Expected delay 1 day.
+
+The system should turn raw business data into actionable operational intelligence.
+
+---
+
+# 91. MOST IMPORTANT REQUIREMENT
+
+Build the platform so that the following statement becomes true
+
+ Paravalves should be able to run their daily business without maintaining parallel Excel workflows for information already managed by this system.
+
+The goal is not to make a beautiful ERP.
+
+The goal is to make a reliable operating system for Paravalves' business.
+
+---
+
+# 92. FINAL INSTRUCTION TO THE ENGINEERING AGENT
+
+Before writing significant amounts of code
+
+1. Inspect the existing repository.
+2. Identify the existing stack.
+3. Identify existing infrastructure.
+4. Identify existing database.
+5. Identify existing authentication.
+6. Identify existing integrations.
+7. Produce an architecture plan.
+8. Produce a databaseentity relationship plan.
+9. Produce a module dependency graph.
+10. Produce a phased implementation plan.
+
+Do not destroy working existing functionality.
+
+Do not rewrite infrastructure without reason.
+
+Do not introduce dependencies unnecessarily.
+
+Do not ask for confirmation for every small implementation decision.
+
+Make reasonable engineering decisions and document them.
+
+However, when a decision would materially alter business requirements, stop and identify the decision explicitly.
+
+After each major phase
+
+ Run tests.
+ Run type checks.
+ Run lint.
+ Run build.
+ Check migrations.
+ Check security.
+ Check database integrity.
+ Check affected workflows.
+
+Never mark a feature complete merely because it compiles.
+
+At the end, perform a full system audit against this specification.
+
+Generate a final
+
+1. Feature completion report
+2. Database integrity report
+3. Security report
+4. Performance report
+5. Test report
+6. Deployment report
+7. Known limitations report
+
+Any missing feature must be explicitly identified.
+
+Do not claim 100% completion if something is incomplete.
+
+The final system must be production-grade, secure, performant, maintainable, auditable and genuinely usable by Paravalves' employees.

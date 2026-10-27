@@ -1,0 +1,42 @@
+name: CI
+on:
+  push: { branches: [main] }
+  pull_request: {}
+
+jobs:
+  build-test:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: paravalves
+          POSTGRES_PASSWORD: paravalves_dev_pw
+          POSTGRES_DB: paravalves
+        ports: ['55432:5432']
+        options: >-
+          --health-cmd "pg_isready -U paravalves"
+          --health-interval 5s --health-timeout 5s --health-retries 20
+    env:
+      DATABASE_URL: postgres://paravalves:paravalves_dev_pw@127.0.0.1:55432/paravalves
+      SESSION_SECRET: ci-secret
+      FILE_TOKEN_SECRET: ci-secret
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 20, cache: npm }
+      - run: npm ci
+      - name: Type check
+        run: npm run typecheck
+      - name: Lint
+        run: npm run lint
+      - name: Migrate (clean DB)
+        run: npm run db:migrate
+      - name: Seed
+        run: npm run db:seed
+      - name: Unit tests
+        run: npm run test
+      - name: E2E chain (domain)
+        run: npm run test:e2e
+      - name: Build
+        run: npm run build

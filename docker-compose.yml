@@ -1,0 +1,23 @@
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: paravalves-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: paravalves
+      POSTGRES_PASSWORD: paravalves_dev_pw
+      POSTGRES_DB: paravalves
+      TZ: UTC
+      PGTZ: UTC
+    ports:
+      - "55432:5432"
+    volumes:
+      - paravalves_pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U paravalves -d paravalves"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+volumes:
+  paravalves_pgdata:

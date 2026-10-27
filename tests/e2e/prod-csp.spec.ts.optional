@@ -1,0 +1,16 @@
+import { test, expect } from '@playwright/test';
+test('production app works under strict nonce CSP', async ({ page }) => {
+  const cspErrors: string[] = [];
+  page.on('console', (m) => { const t = m.text(); if (/Content Security Policy|CSP/i.test(t)) cspErrors.push(t.slice(0,150)); });
+  await page.goto('http://localhost:3100/login');
+  await page.fill('input[name="email"]', 'admin@paravalves.com');
+  await page.fill('input[name="password"]', 'admin123');
+  await page.getByRole('button', { name: 'Sign in' }).click();
+  await page.waitForURL('**/dashboard');
+  await expect(page.getByText('Attention Required')).toBeVisible();
+  // client interactivity must still work under strict CSP
+  await page.getByRole('button', { name: 'Toggle theme' }).click();
+  await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
+  console.log('CSP VIOLATIONS:', cspErrors.length ? cspErrors : 'none');
+  expect(cspErrors).toHaveLength(0);
+});

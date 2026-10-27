@@ -1,0 +1,108 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ============================================================================
+   Paravalves brand system — sourced from paravalves.com
+   Warm paper canvas · signature coral-red #FF2C4D · charcoal ink · geometric.
+   ========================================================================== */
+:root {
+  --bg: 248 248 247;          /* near-white light canvas */
+  --surface: 255 255 255;
+  --raised: 255 255 255;
+  --line: 226 223 220;
+  --line-strong: 206 202 198;
+  --ink: 33 37 41;            /* #212529 their charcoal */
+  --muted: 82 82 82;          /* #525252 their gray */
+  --faint: 150 147 143;
+  --brand: 255 44 77;         /* #FF2C4D signature coral-red */
+  --brand-strong: 224 28 60;
+  --brand-ink: 255 255 255;
+  --brand-wash: 255 234 237;
+  --ok: 22 148 92;
+  --ok-wash: 232 245 238;
+  --warn: 194 124 8;
+  --warn-wash: 250 243 227;
+  --danger: 214 40 40;
+  --danger-wash: 251 234 234;
+  --info: 45 100 200;
+  --info-wash: 235 241 251;
+  --ring: 255 108 130;
+  --shadow-sm: 0 1px 2px 0 rgb(20 18 17 / 0.05);
+  --shadow-md: 0 4px 14px -3px rgb(20 18 17 / 0.10), 0 2px 4px -2px rgb(20 18 17 / 0.05);
+  --shadow-lg: 0 14px 36px -10px rgb(20 18 17 / 0.18);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    --bg: 20 21 23;            /* near-black like their hero */
+    --surface: 28 30 33;
+    --raised: 35 38 42;
+    --line: 45 48 53;
+    --line-strong: 62 66 72;
+    --ink: 240 238 236;
+    --muted: 168 165 161;
+    --faint: 112 110 106;
+    --brand: 255 82 104;
+    --brand-strong: 255 120 138;
+    --brand-ink: 255 255 255;
+    --brand-wash: 48 30 34;
+    --ok: 52 190 122;
+    --ok-wash: 20 38 30;
+    --warn: 224 165 62;
+    --warn-wash: 43 37 22;
+    --danger: 244 108 108;
+    --danger-wash: 46 26 26;
+    --info: 108 160 245;
+    --info-wash: 22 32 50;
+    --ring: 255 82 104;
+    --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.35);
+    --shadow-md: 0 4px 16px -3px rgb(0 0 0 / 0.55);
+    --shadow-lg: 0 18px 44px -12px rgb(0 0 0 / 0.65);
+  }
+}
+:root[data-theme='dark'] {
+  --bg: 20 21 23; --surface: 28 30 33; --raised: 35 38 42; --line: 45 48 53; --line-strong: 62 66 72;
+  --ink: 240 238 236; --muted: 168 165 161; --faint: 112 110 106;
+  --brand: 255 82 104; --brand-strong: 255 120 138; --brand-ink: 255 255 255; --brand-wash: 48 30 34;
+  --ok: 52 190 122; --ok-wash: 20 38 30; --warn: 224 165 62; --warn-wash: 43 37 22;
+  --danger: 244 108 108; --danger-wash: 46 26 26; --info: 108 160 245; --info-wash: 22 32 50; --ring: 255 82 104;
+}
+:root[data-theme='light'] {
+  --bg: 248 248 247; --surface: 255 255 255; --raised: 255 255 255; --line: 228 226 223; --line-strong: 208 205 201;
+  --ink: 33 37 41; --muted: 82 82 82; --faint: 150 147 143;
+  --brand: 255 44 77; --brand-strong: 224 28 60; --brand-ink: 255 255 255; --brand-wash: 255 234 237;
+}
+
+* { box-sizing: border-box; }
+html, body { padding: 0; margin: 0; }
+body {
+  background: rgb(var(--bg));
+  color: rgb(var(--ink));
+  font-family: var(--font-sans), ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  font-size: 14px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+a { color: inherit; text-decoration: none; }
+input, select, textarea, button { font: inherit; color: inherit; }
+::selection { background: rgb(var(--brand) / 0.2); }
+
+.tnum { font-variant-numeric: tabular-nums; }
+.brandmark { font-family: var(--font-brand), var(--font-sans), sans-serif; letter-spacing: -0.03em; }
+
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgb(var(--line-strong)); border-radius: 999px; border: 2px solid rgb(var(--bg)); }
+::-webkit-scrollbar-thumb:hover { background: rgb(var(--faint)); }
+
+@keyframes shimmer { 100% { transform: translateX(100%); } }
+.skeleton { position: relative; overflow: hidden; background: rgb(var(--line) / 0.7); border-radius: 6px; }
+.skeleton::after {
+  content: ''; position: absolute; inset: 0; transform: translateX(-100%);
+  background: linear-gradient(90deg, transparent, rgb(var(--surface) / 0.65), transparent);
+  animation: shimmer 1.4s infinite;
+}
+@keyframes fadeUp { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
+.animate-in { animation: fadeUp 0.24s ease-out both; }
