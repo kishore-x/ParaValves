@@ -7,10 +7,12 @@ const nextConfig = {
   ...(isDocker ? { output: 'standalone' } : {}),
   reactStrictMode: true,
   poweredByHeader: false,
-  serverExternalPackages: ['pg', 'pdfkit', 'nodemailer'],
+  serverExternalPackages: ['pg', 'pdfkit', 'nodemailer', '@electric-sql/pglite'],
   // pdfkit ships .afm metric files that aren't detected by static analysis —
   // include them so PDF generation works on serverless (Vercel) too.
   outputFileTracingIncludes: {
+    // In-memory demo DB (PGlite) loads its WASM/extension bundles from disk at runtime.
+    '/**': ['./node_modules/@electric-sql/pglite/dist/**'],
     '/api/invoices/**': ['./node_modules/pdfkit/js/data/**'],
     '/api/quotes/**': ['./node_modules/pdfkit/js/data/**'],
   },

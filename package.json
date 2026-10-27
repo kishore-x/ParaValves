@@ -26,6 +26,7 @@
     "db:setup": "npm run db:migrate && npm run db:seed"
   },
   "dependencies": {
+    "@electric-sql/pglite": "^0.5.12",
     "date-fns": "^4.1.0",
     "decimal.js": "^10.4.3",
     "next": "^15.1.6",

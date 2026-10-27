@@ -1,11 +1,16 @@
 import 'server-only';
-import { Pool, type PoolClient, type QueryResultRow } from 'pg';
+import { Pool, type QueryResultRow } from 'pg';
 import { env } from '../env';
+import { pglitePool, pgliteTx, type Queryable } from './pglite';
 
 declare global {
   // eslint-disable-next-line no-var
   var __pv_pool: Pool | undefined;
 }
+
+// Demo mode: in-memory Postgres (PGlite) instead of a server. Explicit via DEMO_DB=pglite,
+// or automatic on Vercel when no DATABASE_URL has been configured.
+const demo = process.env.DEMO_DB === 'pglite' || (!!process.env.VERCEL && !process.env.DATABASE_URL);
 
 const url = env.DATABASE_URL;
 const isLocal = /@(localhost|127\.0\.0\.1|db)[:/]/.test(url);
@@ -21,7 +26,7 @@ const defaultMax = process.env.VERCEL ? 3 : 10;
 const rawMax = process.env.DATABASE_POOL_MAX;
 const poolMax = rawMax && rawMax.trim() !== '' && Number.isFinite(Number(rawMax)) ? Number(rawMax) : defaultMax;
 
-export const pool: Pool =
+const realPool = (): Pool =>
   global.__pv_pool ??
   new Pool({
     connectionString: url,
@@ -31,7 +36,9 @@ export const pool: Pool =
     connectionTimeoutMillis: 10_000,
   });
 
-if (env.NODE_ENV !== 'production') global.__pv_pool = pool;
+export const pool: Pool = demo ? (pglitePool as unknown as Pool) : realPool();
+
+if (!demo && env.NODE_ENV !== 'production') global.__pv_pool = pool;
 
 export async function query<T extends QueryResultRow = QueryResultRow>(
   text: string,
@@ -51,6 +58,7 @@ export async function one<T extends QueryResultRow = QueryResultRow>(
 
 /** Run fn inside a transaction; commits on success, rolls back on throw. */
 export async function tx<T>(fn: (c: TxClient) => Promise<T>): Promise<T> {
+  if (demo) return pgliteTx((c) => fn(new TxClient(c)));
   const client = await pool.connect();
   try {
     await client.query('begin');
@@ -66,7 +74,7 @@ export async function tx<T>(fn: (c: TxClient) => Promise<T>): Promise<T> {
 }
 
 export class TxClient {
-  constructor(private readonly client: PoolClient) {}
+  constructor(private readonly client: Queryable) {}
   async query<T extends QueryResultRow = QueryResultRow>(text: string, params: unknown[] = []): Promise<T[]> {
     const res = await this.client.query<T>(text, params as never[]);
     return res.rows;
