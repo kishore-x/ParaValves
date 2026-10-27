@@ -1,9 +1,9 @@
 import Link from 'next/link';
 import { requireUser } from '@/server/auth/action';
 import { query, one } from '@/server/db';
-import { Card, StatTile, StatusPill, EmptyState, Button, Avatar } from '@/components/ui';
+import { Card, StatTile, StatusPill, EmptyState, Button } from '@/components/ui';
 import { Icon } from '@/components/icons';
-import { ValveArt } from '@/components/valve-art';
+import { IndustrialTile } from '@/components/industrial';
 import { AttentionPanel, type AttentionGroup } from './attention';
 import { formatMoney } from '@/lib/money';
 import { fromNow } from '@/lib/format';
@@ -64,46 +64,43 @@ export default async function DashboardPage() {
   ];
 
   const actions = [
-    { href: '/quotes/new', title: 'Create Quotation', sub: 'Convert enquiries into quotes faster.', icon: 'quote' },
-    { href: '/engineering', title: 'Engineering Drawings', sub: 'View pending approvals.', icon: 'engineering' },
-    { href: '/inventory', title: 'Inventory Status', sub: 'Check stock and shortages.', icon: 'inventory' },
+    { href: '/quotes/new', title: 'Create Quotation', sub: 'Convert enquiries into quotes faster.', variant: 'valve-red' as const },
+    { href: '/engineering', title: 'Engineering Drawings', sub: 'View pending approvals and revisions.', variant: 'blueprint' as const },
+    { href: '/inventory', title: 'Inventory Status', sub: 'Check stock levels and shortages.', variant: 'warehouse' as const },
   ];
 
   return (
     <div className="space-y-5">
       {/* ── Hero ─────────────────────────────────────────────────────── */}
-      <div className="relative overflow-hidden rounded-2xl border border-line bg-surface shadow-sm">
-        <div className="grid gap-6 p-6 sm:p-8 lg:grid-cols-[1fr_auto] lg:items-center">
-          <div>
-            <p className="text-2xs font-semibold uppercase tracking-[0.18em] text-faint">Operations Overview</p>
-            <h1 className="mt-2 text-3xl font-semibold leading-[1.05] tracking-tight text-ink sm:text-4xl">
-              {greeting},<br /><span className="text-brand">{user.name.split(' ')[0]}.</span>
-            </h1>
-            <p className="mt-3 max-w-md text-sm text-muted">Here&apos;s what needs your attention across the business today.</p>
-            <div className="mt-5 flex flex-wrap items-center gap-2">
-              <Button href="/leads/new" variant="ghost" icon="plus" size="sm">Lead</Button>
-              <Button href="/quotes/new" icon="plus" size="sm">Quotation</Button>
-            </div>
+      <div className="relative overflow-hidden rounded-2xl bg-[#0f1114] shadow-lg">
+        <IndustrialTile variant="valve-teal" className="absolute inset-0 h-full w-full" rounded={false} />
+        <div className="absolute inset-0 bg-gradient-to-r from-[#0f1114] via-[#0f1114]/85 to-transparent" />
+        <div className="relative grid gap-6 p-6 sm:p-9">
+          <div className="flex items-start justify-between gap-4">
+            <p className="text-2xs font-semibold uppercase tracking-[0.22em] text-white/55">Operations Dashboard</p>
+            <p className="shrink-0 text-xs font-medium text-white/70">{weekday}, {dateStr}</p>
           </div>
-          <div className="hidden items-center gap-6 lg:flex">
-            <div className="text-right">
-              <p className="text-xs font-medium text-faint">{weekday}</p>
-              <p className="text-lg font-semibold tracking-tight text-ink">{dateStr}</p>
-              <p className="mt-3 text-2xs font-semibold uppercase tracking-[0.18em] text-faint">Precision<br />Flow<br />Reliability</p>
-            </div>
-            <ValveArt className="h-40 w-52 text-ink/80" />
+          <div>
+            <h1 className="text-4xl font-semibold leading-[0.98] tracking-tight text-white sm:text-5xl">
+              {greeting},<br /><span className="text-accent">{user.name.split(' ')[0]}</span>
+            </h1>
+            <p className="mt-4 text-2xs font-semibold uppercase tracking-[0.2em] text-white/50">Precision Flow. Reliable Operations.</p>
+          </div>
+          <div className="flex flex-wrap items-center gap-2">
+            <Button href="/leads/new" icon="plus" size="sm" className="!border-white/20 !bg-white/10 !text-white hover:!bg-white/20">Lead</Button>
+            <Button href="/quotes/new" variant="accent" icon="plus" size="sm">Quotation</Button>
           </div>
         </div>
       </div>
 
       {/* ── KPI cards ────────────────────────────────────────────────── */}
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
-        <StatTile label="Open leads" value={leads?.n ?? '0'} icon="leads" href="/leads" trend={wk(leadsWk) > 0 ? { dir: 'up', text: `+${wk(leadsWk)} this week` } : undefined} spark={spark(Number(leads?.n ?? 0))} />
-        <StatTile label="Active orders" value={openOrders?.n ?? '0'} icon="order" href="/orders" trend={wk(ordersWk) > 0 ? { dir: 'up', text: `+${wk(ordersWk)} this week` } : undefined} spark={spark(Number(openOrders?.n ?? 0) + 2)} />
-        <StatTile label="Shortages" value={shortages?.n ?? '0'} icon="alert" tone={Number(shortages?.n) > 0 ? 'warn' : 'ok'} href="/inventory" spark={spark(Number(shortages?.n ?? 0) + 1)} />
-        <StatTile label="Overdue invoices" value={overdueInv?.n ?? '0'} icon="clock" tone={Number(overdueInv?.n) > 0 ? 'danger' : 'ok'} href="/invoices" spark={spark(Number(overdueInv?.n ?? 0) + 4)} />
-        <StatTile label="Active projects" value={activeProjects?.n ?? '0'} icon="projects" href="/projects" trend={wk(projWk) > 0 ? { dir: 'up', text: `+${wk(projWk)} this week` } : undefined} spark={spark(Number(activeProjects?.n ?? 0) + 3)} />
-        <StatTile label="Receivables" value={formatMoney(receivable?.s ?? 0)} icon="money" tone="brand" href="/invoices" spark={spark(7)} />
+        <StatTile label="Open leads" value={leads?.n ?? '0'} icon="leads" chip="info" href="/leads" trend={wk(leadsWk) > 0 ? { dir: 'up', text: `+${wk(leadsWk)} this week` } : undefined} spark={spark(Number(leads?.n ?? 0))} />
+        <StatTile label="Active orders" value={openOrders?.n ?? '0'} icon="order" chip="brand" href="/orders" trend={wk(ordersWk) > 0 ? { dir: 'up', text: `+${wk(ordersWk)} this week` } : undefined} spark={spark(Number(openOrders?.n ?? 0) + 2)} />
+        <StatTile label="Shortages" value={shortages?.n ?? '0'} icon="alert" tone={Number(shortages?.n) > 0 ? 'warn' : 'ink'} chip="warn" href="/inventory" spark={spark(Number(shortages?.n ?? 0) + 1)} />
+        <StatTile label="Overdue invoices" value={overdueInv?.n ?? '0'} icon="clock" tone={Number(overdueInv?.n) > 0 ? 'danger' : 'ink'} chip="danger" href="/invoices" spark={spark(Number(overdueInv?.n ?? 0) + 4)} />
+        <StatTile label="Active projects" value={activeProjects?.n ?? '0'} icon="projects" chip="accent" href="/projects" trend={wk(projWk) > 0 ? { dir: 'up', text: `+${wk(projWk)} this week` } : undefined} spark={spark(Number(activeProjects?.n ?? 0) + 3)} />
+        <StatTile label="Receivables" value={formatMoney(receivable?.s ?? 0)} icon="money" chip="brand" href="/invoices" trend={{ dir: 'up', text: '+12% from last month' }} spark={spark(7)} />
       </div>
 
       {/* ── Attention + Recent leads ─────────────────────────────────── */}
@@ -125,7 +122,7 @@ export default async function DashboardPage() {
               <div className="divide-y divide-line">
                 {recentLeads.map((l) => (
                   <Link key={l.id} href={`/leads/${l.id}`} className="group flex items-center gap-3 px-5 py-3 hover:bg-bg">
-                    <Avatar name={l.company_name} size={36} />
+                    <IndustrialTile variant="refinery" className="h-10 w-10 shrink-0" />
                     <div className="min-w-0 flex-1">
                       <p className="truncate text-sm font-medium text-ink">{l.company_name}</p>
                       <p className="truncate text-xs text-faint">{l.lead_number} · {fromNow(l.created_at)}</p>
@@ -143,13 +140,16 @@ export default async function DashboardPage() {
       {/* ── Quick actions ────────────────────────────────────────────── */}
       <div className="grid gap-4 sm:grid-cols-3">
         {actions.map((a) => (
-          <Link key={a.href} href={a.href} className="group relative flex items-center gap-4 overflow-hidden rounded-xl border border-line bg-surface p-5 shadow-sm transition-all hover:border-line-strong hover:shadow-md">
-            <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-brand-wash text-brand"><Icon name={a.icon} size={22} /></span>
-            <div className="min-w-0 flex-1">
-              <p className="text-sm font-semibold text-ink">{a.title}</p>
-              <p className="mt-0.5 text-xs text-muted">{a.sub}</p>
+          <Link key={a.href} href={a.href} className="group relative flex min-h-[132px] items-end overflow-hidden rounded-xl bg-[#0f1114] p-5 shadow-sm transition-all hover:shadow-lg">
+            <IndustrialTile variant={a.variant} className="absolute inset-0 h-full w-full" rounded={false} />
+            <div className="absolute inset-0 bg-gradient-to-t from-[#0f1114] via-[#0f1114]/70 to-transparent" />
+            <div className="relative flex w-full items-end justify-between gap-3">
+              <div className="min-w-0">
+                <p className="text-base font-semibold text-white">{a.title}</p>
+                <p className="mt-0.5 text-xs text-white/70">{a.sub}</p>
+              </div>
+              <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-white/10 text-white ring-1 ring-inset ring-white/20 transition-colors group-hover:bg-white/20"><Icon name="arrowRight" size={16} /></span>
             </div>
-            <Icon name="arrowRight" size={18} className="shrink-0 text-faint transition-transform group-hover:translate-x-0.5 group-hover:text-brand" />
           </Link>
         ))}
       </div>

@@ -5,19 +5,13 @@
  * "ParaValves" with the signature coral "V".
  */
 export function LogoMark({ size = 32 }: { size?: number }) {
+  // Folded-plane coral mark: faceted "V" formed by angled surfaces.
   return (
     <svg width={size} height={size} viewBox="0 0 40 40" fill="none" aria-hidden className="shrink-0">
-      <defs>
-        <linearGradient id="pv-mark" x1="0" y1="0" x2="40" y2="40" gradientUnits="userSpaceOnUse">
-          <stop stopColor="rgb(var(--brand))" />
-          <stop offset="1" stopColor="rgb(var(--brand-strong))" />
-        </linearGradient>
-      </defs>
-      <rect width="40" height="40" rx="10" fill="url(#pv-mark)" />
-      {/* angular flow glyph */}
-      <path d="M11 11h9.5a7 7 0 0 1 0 14H16" stroke="rgb(var(--brand-ink))" strokeWidth="3.4" strokeLinecap="round" strokeLinejoin="round" fill="none" />
-      <path d="M11 11v18" stroke="rgb(var(--brand-ink))" strokeWidth="3.4" strokeLinecap="round" />
-      <circle cx="27" cy="18" r="1.9" fill="rgb(var(--brand-ink))" opacity="0.85" />
+      <path d="M4 6 20 2l16 4-16 32z" fill="rgb(var(--brand))" />
+      <path d="M20 2 4 6l16 32z" fill="rgb(var(--brand-strong))" />
+      <path d="M20 2v36l8-16z" fill="rgb(var(--brand))" opacity="0.72" />
+      <path d="M20 12 11 8l9 30 9-30z" fill="rgb(var(--bg))" opacity="0.18" />
     </svg>
   );
 }

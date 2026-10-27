@@ -24,7 +24,7 @@ type BtnProps = {
   href?: string;
   onClick?: () => void;
   type?: 'button' | 'submit';
-  variant?: 'primary' | 'ghost' | 'subtle' | 'danger';
+  variant?: 'primary' | 'ghost' | 'subtle' | 'danger' | 'accent';
   size?: 'sm' | 'md';
   disabled?: boolean;
   icon?: string;
@@ -38,6 +38,7 @@ export function Button({ children, href, onClick, type = 'button', variant = 'pr
     ghost: 'border border-line bg-surface text-ink hover:bg-bg hover:border-line-strong',
     subtle: 'bg-bg text-muted hover:text-ink hover:bg-line/60',
     danger: 'bg-danger text-white shadow-sm hover:opacity-90 active:scale-[.98]',
+    accent: 'bg-accent text-accent-ink shadow-sm hover:bg-accent-strong active:scale-[.98]',
   }[variant];
   const cls = `${base} ${sizes} ${variants} ${className}`;
   const inner = <>{icon && <Icon name={icon} size={size === 'sm' ? 15 : 16} />}{children}</>;
@@ -86,9 +87,9 @@ export function Badge({ children, tone = 'muted' }: { children: ReactNode; tone?
 }
 
 /* ── Sparkline ────────────────────────────────────────────────────────── */
-export function Sparkline({ data, tone = 'brand', className = '' }: { data: number[]; tone?: 'ink' | 'ok' | 'warn' | 'danger' | 'brand'; className?: string }) {
+export function Sparkline({ data, tone = 'brand', className = '' }: { data: number[]; tone?: StatTone; className?: string }) {
   const max = Math.max(1, ...data);
-  const barTone = { ink: 'bg-faint', ok: 'bg-ok', warn: 'bg-warn', danger: 'bg-danger', brand: 'bg-brand' }[tone];
+  const barTone = { ink: 'bg-faint', ok: 'bg-ok', warn: 'bg-warn', danger: 'bg-danger', brand: 'bg-brand', info: 'bg-info', accent: 'bg-accent' }[tone];
   return (
     <div className={`flex h-7 items-end gap-[3px] ${className}`}>
       {data.map((v, i) => (
@@ -103,15 +104,17 @@ export function Sparkline({ data, tone = 'brand', className = '' }: { data: numb
 }
 
 /* ── Stat tile ────────────────────────────────────────────────────────── */
-export function StatTile({ label, value, hint, tone = 'ink', href, icon, trend, spark }: {
-  label: string; value: ReactNode; hint?: string; tone?: 'ink' | 'ok' | 'warn' | 'danger' | 'brand'; href?: string; icon?: string;
-  trend?: { dir: 'up' | 'down'; text: string }; spark?: number[];
+export type StatTone = 'ink' | 'ok' | 'warn' | 'danger' | 'brand' | 'info' | 'accent';
+export function StatTile({ label, value, hint, tone = 'ink', href, icon, trend, spark, chip }: {
+  label: string; value: ReactNode; hint?: string; tone?: StatTone; href?: string; icon?: string;
+  trend?: { dir: 'up' | 'down'; text: string }; spark?: number[]; chip?: StatTone;
 }) {
-  const toneCls = { ink: 'text-ink', ok: 'text-ok', warn: 'text-warn', danger: 'text-danger', brand: 'text-brand' }[tone];
+  const toneCls = { ink: 'text-ink', ok: 'text-ok', warn: 'text-warn', danger: 'text-danger', brand: 'text-brand', info: 'text-info', accent: 'text-accent' }[tone];
   const chipTone = {
     ink: 'bg-bg text-muted ring-line', ok: 'bg-ok-wash text-ok ring-ok/20', warn: 'bg-warn-wash text-warn ring-warn/20',
     danger: 'bg-danger-wash text-danger ring-danger/20', brand: 'bg-brand-wash text-brand ring-brand/20',
-  }[tone];
+    info: 'bg-info-wash text-info ring-info/20', accent: 'bg-accent-wash text-accent ring-accent/20',
+  }[chip ?? tone];
   const inner = (
     <div className={`group flex h-full flex-col rounded-xl border border-line bg-surface p-4 shadow-sm ${href ? 'transition-all hover:border-line-strong hover:shadow-md' : ''}`}>
       <div className="flex items-start justify-between gap-2">
@@ -128,7 +131,7 @@ export function StatTile({ label, value, hint, tone = 'ink', href, icon, trend, 
           )}
           {!trend && hint && <p className="truncate text-xs text-faint">{hint}</p>}
         </div>
-        {spark && <Sparkline data={spark} tone={tone === 'ink' ? 'brand' : tone} />}
+        {spark && <Sparkline data={spark} tone={chip ?? (tone === 'ink' ? 'brand' : tone)} />}
       </div>
     </div>
   );

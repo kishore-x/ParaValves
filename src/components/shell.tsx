@@ -5,6 +5,7 @@ import { useEffect, useState } from 'react';
 import { Icon } from './icons';
 import { Avatar } from './ui';
 import { Wordmark, LogoMark } from './logo';
+import { IndustrialTile } from './industrial';
 import { ThemeToggle } from './theme';
 import { logoutAction } from '@/app/logout/actions';
 
@@ -87,10 +88,13 @@ function SidebarContent() {
           <p className="text-2xs tracking-wide text-faint">Operations Platform</p>
         </div>
       </div>
-      <nav className="flex-1 overflow-y-auto px-3 pb-6">
-        {NAV.map((g) => (
+      <nav className="flex-1 overflow-y-auto px-3 pb-4">
+        {NAV.map((g, gi) => (
           <div key={g.group} className="mb-5">
-            <p className="px-3 pb-1.5 text-2xs font-semibold uppercase tracking-wider text-faint">{g.group}</p>
+            <p className="flex items-center justify-between px-3 pb-1.5 text-2xs font-semibold uppercase tracking-wider text-faint">
+              <span>{g.group}</span>
+              <span className="tnum text-faint/70">{String(gi + 1).padStart(2, '0')}</span>
+            </p>
             <div className="space-y-0.5">
               {g.items.map((it) => {
                 const active = pathname === it.href || pathname.startsWith(it.href + '/');
@@ -112,6 +116,15 @@ function SidebarContent() {
           </div>
         ))}
       </nav>
+      <div className="px-3 pb-4">
+        <div className="relative overflow-hidden rounded-xl bg-[#111316] p-4">
+          <IndustrialTile variant="valve-red" className="absolute inset-0 h-full w-full opacity-45" rounded={false} />
+          <div className="relative">
+            <p className="text-2xs font-semibold uppercase leading-relaxed tracking-[0.18em] text-white/90">Precision<br />Flow<br />Reliability</p>
+            <span className="mt-2 block h-0.5 w-8 rounded-full bg-accent" />
+          </div>
+        </div>
+      </div>
     </>
   );
 }
