@@ -12,7 +12,7 @@ const nextConfig = {
   // include them so PDF generation works on serverless (Vercel) too.
   outputFileTracingIncludes: {
     // In-memory demo DB (PGlite) loads its WASM/extension bundles from disk at runtime.
-    '/**': ['./node_modules/@electric-sql/pglite/dist/**'],
+    '/**': ['./node_modules/@electric-sql/pglite/dist/**', './deploy/pglite/snapshot.tar.gz'],
     '/api/invoices/**': ['./node_modules/pdfkit/js/data/**'],
     '/api/quotes/**': ['./node_modules/pdfkit/js/data/**'],
   },

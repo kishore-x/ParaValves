@@ -1,5 +1,7 @@
 import 'server-only';
 import { AsyncLocalStorage } from 'node:async_hooks';
+import { existsSync, readFileSync } from 'node:fs';
+import path from 'node:path';
 import { PGlite } from '@electric-sql/pglite';
 import { pg_trgm } from '@electric-sql/pglite/contrib/pg_trgm';
 import { pgcrypto } from '@electric-sql/pglite/contrib/pgcrypto';
@@ -20,13 +22,19 @@ declare global {
   var __pv_pglite: Promise<PGlite> | undefined;
 }
 
+// Pre-built data directory (scripts/build-demo-snapshot.mjs): boots ~5x faster than replaying SQL.
+const SNAPSHOT = path.join(process.cwd(), 'deploy', 'pglite', 'snapshot.tar.gz');
+
 async function init(): Promise<PGlite> {
+  const snapshot = existsSync(SNAPSHOT) ? new Blob([readFileSync(SNAPSHOT)]) : undefined;
   const db = new PGlite({
+    ...(snapshot ? { loadDataDir: snapshot } : {}),
     extensions: { pg_trgm, pgcrypto },
     // Match node-postgres: int8 and numeric come back as strings (money stays exact).
     parsers: { 20: (x: string) => x, 1700: (x: string) => x },
   });
   await db.waitReady;
+  if (snapshot) return db;
   await db.exec(DEMO_SCHEMA_SQL);
   await db.exec(DEMO_DATA_SQL);
   // The dump disables triggers and blanks search_path for the session — undo both.
