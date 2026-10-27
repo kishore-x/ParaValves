@@ -3,10 +3,10 @@ import Link from 'next/link';
 import { useState } from 'react';
 import { Icon } from '@/components/icons';
 import { EmptyState } from '@/components/ui';
-import { IndustrialTile } from '@/components/industrial';
+import { Photo, type PhotoName } from '@/components/photo';
 
-const TILE: Record<string, 'valve-red' | 'valve-teal' | 'blueprint' | 'warehouse' | 'refinery'> = {
-  leads: 'valve-red', quotes: 'valve-teal', drawings: 'blueprint', projects: 'warehouse',
+const TILE: Record<string, PhotoName> = {
+  leads: 'sparks', quotes: 'blueprint', drawings: 'valve', projects: 'warehouse',
 };
 
 export type AttentionItem = { id: string; n: string; label: string; owner?: string | null; age?: string };
@@ -49,7 +49,7 @@ export function AttentionPanel({ groups }: { groups: AttentionGroup[] }) {
         <div>
           {visible.map((g) => (
             <div key={g.key} className="flex gap-4 border-b border-line px-5 py-4 last:border-0">
-              <IndustrialTile variant={TILE[g.key] ?? 'valve-red'} className="hidden h-[72px] w-[88px] shrink-0 sm:block" />
+              <Photo name={TILE[g.key] ?? 'valve'} alt="" className="hidden h-[72px] w-[88px] shrink-0 rounded-xl sm:block" />
               <div className="min-w-0 flex-1">
                 <p className="mb-1.5 flex items-center gap-2 text-sm font-semibold text-ink">
                   {g.label}

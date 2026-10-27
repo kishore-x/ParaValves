@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react';
 import { Icon } from './icons';
 import { Avatar } from './ui';
 import { Wordmark, LogoMark } from './logo';
-import { IndustrialTile } from './industrial';
+import { Photo } from './photo';
 import { ThemeToggle } from './theme';
 import { logoutAction } from '@/app/logout/actions';
 
@@ -118,7 +118,8 @@ function SidebarContent() {
       </nav>
       <div className="px-3 pb-4">
         <div className="relative overflow-hidden rounded-xl bg-[#111316] p-4">
-          <IndustrialTile variant="valve-red" className="absolute inset-0 h-full w-full opacity-45" rounded={false} />
+          <Photo name="valve" alt="" className="absolute inset-0 h-full w-full opacity-40" />
+          <div className="absolute inset-0 bg-gradient-to-t from-[#111316] via-[#111316]/70 to-[#111316]/30" />
           <div className="relative">
             <p className="text-2xs font-semibold uppercase leading-relaxed tracking-[0.18em] text-white/90">Precision<br />Flow<br />Reliability</p>
             <span className="mt-2 block h-0.5 w-8 rounded-full bg-accent" />

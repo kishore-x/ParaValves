@@ -3,7 +3,7 @@ import { requireUser } from '@/server/auth/action';
 import { query, one } from '@/server/db';
 import { Card, StatTile, StatusPill, EmptyState, Button } from '@/components/ui';
 import { Icon } from '@/components/icons';
-import { IndustrialTile } from '@/components/industrial';
+import { Photo } from '@/components/photo';
 import { AttentionPanel, type AttentionGroup } from './attention';
 import { formatMoney } from '@/lib/money';
 import { fromNow } from '@/lib/format';
@@ -64,17 +64,18 @@ export default async function DashboardPage() {
   ];
 
   const actions = [
-    { href: '/quotes/new', title: 'Create Quotation', sub: 'Convert enquiries into quotes faster.', variant: 'valve-red' as const },
-    { href: '/engineering', title: 'Engineering Drawings', sub: 'View pending approvals and revisions.', variant: 'blueprint' as const },
-    { href: '/inventory', title: 'Inventory Status', sub: 'Check stock levels and shortages.', variant: 'warehouse' as const },
+    { href: '/quotes/new', title: 'Create Quotation', sub: 'Convert enquiries into quotes faster.', photo: 'card-quote' as const },
+    { href: '/engineering', title: 'Engineering Drawings', sub: 'View pending approvals and revisions.', photo: 'card-drawings' as const },
+    { href: '/inventory', title: 'Inventory Status', sub: 'Check stock levels and shortages.', photo: 'card-inventory' as const },
   ];
 
   return (
     <div className="space-y-5">
       {/* ── Hero ─────────────────────────────────────────────────────── */}
       <div className="relative overflow-hidden rounded-2xl bg-[#0f1114] shadow-lg">
-        <IndustrialTile variant="valve-teal" className="absolute inset-0 h-full w-full" rounded={false} />
-        <div className="absolute inset-0 bg-gradient-to-r from-[#0f1114] via-[#0f1114]/85 to-transparent" />
+        <Photo name="hero" alt="" className="absolute inset-0 h-full w-full" />
+        <div className="absolute inset-0 bg-gradient-to-r from-[#0f1114] via-[#0f1114]/80 to-[#0f1114]/10" />
+        <div className="absolute inset-0 bg-gradient-to-l from-accent/25 via-transparent to-transparent" />
         <div className="relative grid gap-6 p-6 sm:p-9">
           <div className="flex items-start justify-between gap-4">
             <p className="text-2xs font-semibold uppercase tracking-[0.22em] text-white/55">Operations Dashboard</p>
@@ -122,7 +123,7 @@ export default async function DashboardPage() {
               <div className="divide-y divide-line">
                 {recentLeads.map((l) => (
                   <Link key={l.id} href={`/leads/${l.id}`} className="group flex items-center gap-3 px-5 py-3 hover:bg-bg">
-                    <IndustrialTile variant="refinery" className="h-10 w-10 shrink-0" />
+                    <Photo name="plant" alt="" className="h-10 w-10 shrink-0 rounded-lg" />
                     <div className="min-w-0 flex-1">
                       <p className="truncate text-sm font-medium text-ink">{l.company_name}</p>
                       <p className="truncate text-xs text-faint">{l.lead_number} · {fromNow(l.created_at)}</p>
@@ -141,8 +142,8 @@ export default async function DashboardPage() {
       <div className="grid gap-4 sm:grid-cols-3">
         {actions.map((a) => (
           <Link key={a.href} href={a.href} className="group relative flex min-h-[132px] items-end overflow-hidden rounded-xl bg-[#0f1114] p-5 shadow-sm transition-all hover:shadow-lg">
-            <IndustrialTile variant={a.variant} className="absolute inset-0 h-full w-full" rounded={false} />
-            <div className="absolute inset-0 bg-gradient-to-t from-[#0f1114] via-[#0f1114]/70 to-transparent" />
+            <Photo name={a.photo} alt="" className="absolute inset-0 h-full w-full transition-transform duration-500 group-hover:scale-105" />
+            <div className="absolute inset-0 bg-gradient-to-t from-[#0f1114] via-[#0f1114]/75 to-[#0f1114]/20" />
             <div className="relative flex w-full items-end justify-between gap-3">
               <div className="min-w-0">
                 <p className="text-base font-semibold text-white">{a.title}</p>
