@@ -85,23 +85,54 @@ export function Badge({ children, tone = 'muted' }: { children: ReactNode; tone?
   return <span className={`inline-flex items-center rounded-md px-2 py-0.5 text-2xs font-semibold ring-1 ring-inset ${TONE_CLS[tone]}`}>{children}</span>;
 }
 
-/* ── Stat tile ────────────────────────────────────────────────────────── */
-export function StatTile({ label, value, hint, tone = 'ink', href, icon }: {
-  label: string; value: ReactNode; hint?: string; tone?: 'ink' | 'ok' | 'warn' | 'danger' | 'brand'; href?: string; icon?: string;
-}) {
-  const toneCls = { ink: 'text-ink', ok: 'text-ok', warn: 'text-warn', danger: 'text-danger', brand: 'text-brand' }[tone];
-  const iconTone = { ink: 'text-faint', ok: 'text-ok', warn: 'text-warn', danger: 'text-danger', brand: 'text-brand' }[tone];
-  const inner = (
-    <div className={`group rounded-xl border border-line bg-surface p-4 shadow-sm ${href ? 'transition-all hover:border-line-strong hover:shadow-md' : ''}`}>
-      <div className="flex items-center justify-between">
-        <p className="text-xs font-medium text-muted">{label}</p>
-        {icon && <Icon name={icon} size={16} className={iconTone} />}
-      </div>
-      <p className={`mt-2 text-2xl font-semibold tracking-tight tnum ${toneCls}`}>{value}</p>
-      {hint && <p className="mt-1 text-xs text-faint">{hint}</p>}
+/* ── Sparkline ────────────────────────────────────────────────────────── */
+export function Sparkline({ data, tone = 'brand', className = '' }: { data: number[]; tone?: 'ink' | 'ok' | 'warn' | 'danger' | 'brand'; className?: string }) {
+  const max = Math.max(1, ...data);
+  const barTone = { ink: 'bg-faint', ok: 'bg-ok', warn: 'bg-warn', danger: 'bg-danger', brand: 'bg-brand' }[tone];
+  return (
+    <div className={`flex h-7 items-end gap-[3px] ${className}`}>
+      {data.map((v, i) => (
+        <span
+          key={i}
+          className={`w-1 rounded-sm ${barTone} ${i === data.length - 1 ? 'opacity-100' : 'opacity-35'}`}
+          style={{ height: `${Math.max(12, (v / max) * 100)}%` }}
+        />
+      ))}
     </div>
   );
-  return href ? <Link href={href} className="block">{inner}</Link> : inner;
+}
+
+/* ── Stat tile ────────────────────────────────────────────────────────── */
+export function StatTile({ label, value, hint, tone = 'ink', href, icon, trend, spark }: {
+  label: string; value: ReactNode; hint?: string; tone?: 'ink' | 'ok' | 'warn' | 'danger' | 'brand'; href?: string; icon?: string;
+  trend?: { dir: 'up' | 'down'; text: string }; spark?: number[];
+}) {
+  const toneCls = { ink: 'text-ink', ok: 'text-ok', warn: 'text-warn', danger: 'text-danger', brand: 'text-brand' }[tone];
+  const chipTone = {
+    ink: 'bg-bg text-muted ring-line', ok: 'bg-ok-wash text-ok ring-ok/20', warn: 'bg-warn-wash text-warn ring-warn/20',
+    danger: 'bg-danger-wash text-danger ring-danger/20', brand: 'bg-brand-wash text-brand ring-brand/20',
+  }[tone];
+  const inner = (
+    <div className={`group flex h-full flex-col rounded-xl border border-line bg-surface p-4 shadow-sm ${href ? 'transition-all hover:border-line-strong hover:shadow-md' : ''}`}>
+      <div className="flex items-start justify-between gap-2">
+        <p className="text-xs font-medium text-muted">{label}</p>
+        {icon && <span className={`inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-lg ring-1 ring-inset ${chipTone}`}><Icon name={icon} size={15} /></span>}
+      </div>
+      <p className={`mt-2 text-[1.65rem] font-semibold leading-none tracking-tight tnum ${toneCls}`}>{value}</p>
+      <div className="mt-auto flex items-end justify-between gap-2 pt-3">
+        <div className="min-w-0">
+          {trend && (
+            <span className={`inline-flex items-center gap-1 text-xs font-medium ${trend.dir === 'up' ? 'text-ok' : 'text-danger'}`}>
+              <Icon name="trending" size={13} className={trend.dir === 'down' ? 'rotate-180' : ''} />{trend.text}
+            </span>
+          )}
+          {!trend && hint && <p className="truncate text-xs text-faint">{hint}</p>}
+        </div>
+        {spark && <Sparkline data={spark} tone={tone === 'ink' ? 'brand' : tone} />}
+      </div>
+    </div>
+  );
+  return href ? <Link href={href} className="block h-full">{inner}</Link> : inner;
 }
 
 /* ── Table ────────────────────────────────────────────────────────────── */
