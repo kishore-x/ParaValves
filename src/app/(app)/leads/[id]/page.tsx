@@ -3,7 +3,7 @@ import { notFound } from 'next/navigation';
 import { requireUser } from '@/server/auth/action';
 import { one } from '@/server/db';
 import { LEAD } from '@/server/workflow/machines';
-import { Card, CardHeader, StatusPill, PageHeader, Button, Field, inputCls } from '@/components/ui';
+import { Card, CardHeader, StatusPill, PageHeader, Button, Field, inputCls, PriorityTag } from '@/components/ui';
 import { ActivityTimeline } from '@/components/timeline';
 import { fmtDate } from '@/lib/format';
 import { formatMoney } from '@/lib/money';
@@ -22,6 +22,7 @@ export default async function LeadDetail({ params }: { params: Promise<{ id: str
   return (
     <div>
       <PageHeader
+        eyebrow="Lead"
         title={`${lead.lead_number}`}
         subtitle={lead.company_name}
         action={<div className="flex items-center gap-2"><StatusPill status={lead.status} />
@@ -41,13 +42,13 @@ export default async function LeadDetail({ params }: { params: Promise<{ id: str
               <Info label="Phone" value={lead.phone} />
               <Info label="Country" value={lead.country} />
               <Info label="Source" value={lead.source} />
-              <Info label="Priority" value={lead.priority} />
+              <Info label="Priority" value={<PriorityTag priority={lead.priority} />} />
               <Info label="Product requirement" value={lead.product_requirement} />
               <Info label="Quantity" value={lead.quantity} />
               <Info label="Expected value" value={lead.expected_value ? formatMoney(lead.expected_value) : null} />
               <Info label="Expected close" value={lead.expected_close ? fmtDate(lead.expected_close) : null} />
               <Info label="Owner" value={lead.owner_name} />
-              {lead.company_id && <Info label="Customer" value={<Link className="text-brand" href={`/companies/${lead.company_id}`}>{lead.linked_number}</Link>} />}
+              {lead.company_id && <Info label="Customer" value={<Link className="font-mono text-xs font-semibold text-brand hover:underline" href={`/companies/${lead.company_id}`}>{lead.linked_number}</Link>} />}
             </dl>
             {lead.description && <div className="border-t border-line p-5 text-sm"><p className="mb-1 text-xs font-medium text-muted">Description</p>{lead.description}</div>}
           </Card>
@@ -74,8 +75,8 @@ export default async function LeadDetail({ params }: { params: Promise<{ id: str
 function Info({ label, value }: { label: string; value: React.ReactNode }) {
   return (
     <div>
-      <dt className="text-xs font-medium text-muted">{label}</dt>
-      <dd className="mt-0.5 text-ink">{value || '—'}</dd>
+      <dt className="text-2xs font-semibold uppercase tracking-wide text-faint">{label}</dt>
+      <dd className="mt-1 text-ink">{value || '—'}</dd>
     </div>
   );
 }

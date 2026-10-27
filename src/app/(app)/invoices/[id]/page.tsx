@@ -20,7 +20,7 @@ export default async function InvoiceDetail({ params }: { params: Promise<{ id: 
 
   return (
     <div>
-      <PageHeader title={inv.invoice_number} subtitle={<Link href={`/companies/${inv.company_id}`} className="text-brand">{inv.company}</Link>}
+      <PageHeader eyebrow="Tax Invoice" title={inv.invoice_number} subtitle={<Link href={`/companies/${inv.company_id}`} className="text-brand hover:underline">{inv.company}</Link>}
         action={<><Button href={`/api/invoices/${inv.id}/pdf`} variant="ghost" size="sm" icon="file">PDF</Button><StatusPill status={inv.status} /></>} />
       <div className="grid gap-5 lg:grid-cols-3">
         <div className="space-y-5 lg:col-span-2">
@@ -89,5 +89,5 @@ export default async function InvoiceDetail({ params }: { params: Promise<{ id: 
     </div>
   );
 }
-function I({ l, v }: { l: string; v: React.ReactNode }) { return <div><dt className="text-xs font-medium text-muted">{l}</dt><dd className="mt-0.5 text-ink">{v || '—'}</dd></div>; }
+function I({ l, v }: { l: string; v: React.ReactNode }) { return <div><dt className="text-2xs font-semibold uppercase tracking-wide text-faint">{l}</dt><dd className="mt-1 text-ink">{v || '—'}</dd></div>; }
 function Row({ l, v }: { l: string; v: string }) { return <div className="flex justify-between text-muted"><span>{l}</span><span className="text-ink">{v}</span></div>; }

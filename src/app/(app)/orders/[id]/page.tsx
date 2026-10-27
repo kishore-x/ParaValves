@@ -4,6 +4,7 @@ import { requireUser } from '@/server/auth/action';
 import { one, query } from '@/server/db';
 import { ORDER } from '@/server/workflow/machines';
 import { Card, CardHeader, PageHeader, StatusPill, Table, Th, Td, Button, Field, inputCls, EmptyState } from '@/components/ui';
+import { Icon } from '@/components/icons';
 import { ActivityTimeline } from '@/components/timeline';
 import { formatMoney } from '@/lib/money';
 import { fmtDate, num } from '@/lib/format';
@@ -32,28 +33,31 @@ export default async function OrderDetail({ params }: { params: Promise<{ id: st
 
   // 360 summary cells
   const cells = [
-    { label: 'Customer', value: <Link href={`/companies/${o.company_id}`} className="text-brand">{o.company}</Link> },
-    { label: 'Quote', value: o.quote_number ? <Link href={`/quotes/${o.quotation_id}`} className="text-brand">{o.quote_number}</Link> : '—' },
-    { label: 'Order value', value: formatMoney(o.grand_total, o.currency) },
-    { label: 'Engineering', value: o.requires_drawing_approval ? (hasReleasedDrawing ? '✓ Drawing released' : 'Pending drawing') : 'Not required' },
-    { label: 'Material', value: totalShortage > 0 ? `⚠ ${totalShortage} short` : '✓ Covered' },
-    { label: 'Project', value: project ? <Link href={`/projects/${project.id}`} className="text-brand">{num(project.progress_pct)}%</Link> : '—' },
-    { label: 'Invoice', value: invoices.length ? <Link href={`/invoices/${invoices[0].id}`} className="text-brand">{invoices[0].invoice_number ?? 'View'}</Link> : 'Pending' },
-    { label: 'Payment', value: invoices.length ? formatMoney(invoices.reduce((a, i) => a + Number(i.paid_amount), 0), o.currency) : 'Pending' },
-  ];
+    { label: 'Customer', icon: 'companies', value: <Link href={`/companies/${o.company_id}`} className="text-brand hover:underline">{o.company}</Link> },
+    { label: 'Quote', icon: 'quote', value: o.quote_number ? <Link href={`/quotes/${o.quotation_id}`} className="font-mono text-xs text-brand hover:underline">{o.quote_number}</Link> : '—' },
+    { label: 'Order value', icon: 'money', value: formatMoney(o.grand_total, o.currency) },
+    { label: 'Engineering', icon: 'engineering', value: o.requires_drawing_approval ? (hasReleasedDrawing ? 'Drawing released' : 'Pending drawing') : 'Not required' },
+    { label: 'Material', icon: 'inventory', value: totalShortage > 0 ? `${totalShortage} short` : 'Covered', tone: totalShortage > 0 ? 'warn' : 'ok' },
+    { label: 'Project', icon: 'projects', value: project ? <Link href={`/projects/${project.id}`} className="text-brand hover:underline">{num(project.progress_pct)}%</Link> : '—' },
+    { label: 'Invoice', icon: 'invoice', value: invoices.length ? <Link href={`/invoices/${invoices[0].id}`} className="font-mono text-xs text-brand hover:underline">{invoices[0].invoice_number ?? 'View'}</Link> : 'Pending' },
+    { label: 'Payment', icon: 'payment', value: invoices.length ? formatMoney(invoices.reduce((a, i) => a + Number(i.paid_amount), 0), o.currency) : 'Pending' },
+  ] as { label: string; icon: string; value: React.ReactNode; tone?: 'warn' | 'ok' }[];
 
   return (
     <div>
-      <PageHeader title={o.order_number} subtitle="Order 360 — the whole situation on one screen"
+      <PageHeader eyebrow="Sales Order" title={o.order_number} subtitle="Order 360 — the whole situation on one screen"
         action={<div className="flex items-center gap-2"><Button href={`/orders/${o.id}/review`} variant="ghost" size="sm">Order review</Button><StatusPill status={o.status} /></div>} />
 
       {/* 360 grid */}
       <div className="mb-5 grid grid-cols-2 gap-3 sm:grid-cols-4">
         {cells.map((c) => (
-          <Card key={c.label} className="p-3.5">
-            <p className="text-xs font-medium text-muted">{c.label}</p>
-            <p className="mt-1 text-sm font-semibold text-ink">{c.value}</p>
-          </Card>
+          <div key={c.label} className="flex items-start gap-3 rounded-xl border border-line bg-surface p-3.5 shadow-sm">
+            <span className={`inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-lg ring-1 ring-inset ${c.tone === 'warn' ? 'bg-warn-wash text-warn ring-warn/20' : c.tone === 'ok' ? 'bg-ok-wash text-ok ring-ok/20' : 'bg-bg text-muted ring-line'}`}><Icon name={c.icon} size={15} /></span>
+            <div className="min-w-0">
+              <p className="text-2xs font-semibold uppercase tracking-wide text-faint">{c.label}</p>
+              <p className={`mt-0.5 truncate text-sm font-semibold ${c.tone === 'warn' ? 'text-warn' : 'text-ink'}`}>{c.value}</p>
+            </div>
+          </div>
         ))}
       </div>
 
@@ -97,7 +101,7 @@ export default async function OrderDetail({ params }: { params: Promise<{ id: st
               <CardHeader title="Drawings" />
               <Table><thead><tr><Th>Number</Th><Th>Title</Th><Th>Status</Th></tr></thead>
                 <tbody>{drawings.map((d) => (
-                  <tr key={d.id}><Td><Link href={`/engineering/${d.id}`} className="text-brand">{d.drawing_number}</Link></Td><Td>{d.title}</Td><Td><StatusPill status={d.status} /></Td></tr>
+                  <tr key={d.id}><Td><Link href={`/engineering/${d.id}`} className="font-mono text-xs font-semibold text-brand hover:underline">{d.drawing_number}</Link></Td><Td>{d.title}</Td><Td><StatusPill status={d.status} /></Td></tr>
                 ))}</tbody></Table>
             </Card>
           )}

@@ -22,7 +22,7 @@ export default async function QuoteDetail({ params }: { params: Promise<{ id: st
 
   return (
     <div>
-      <PageHeader title={q.quote_number} subtitle={<Link href={`/companies/${q.company_id}`} className="text-brand">{q.company}</Link>}
+      <PageHeader eyebrow="Quotation" title={q.quote_number} subtitle={<Link href={`/companies/${q.company_id}`} className="text-brand hover:underline">{q.company}</Link>}
         action={<div className="flex items-center gap-2"><Button href={`/api/quotes/${q.id}/pdf`} variant="ghost" size="sm" icon="file">PDF</Button><StatusPill status={q.status} />
           {order ? <Button href={`/orders/${order.id}`} size="sm" variant="ghost">View {order.order_number}</Button>
             : (q.status === 'ACCEPTED' || q.status === 'SENT' || q.status === 'VIEWED' || q.status === 'NEGOTIATION') &&
