@@ -18,7 +18,7 @@ export default async function ProjectsPage() {
             <thead><tr><Th>Project #</Th><Th>Name</Th><Th>Customer</Th><Th>Progress</Th><Th>Status</Th><Th>Due</Th></tr></thead>
             <tbody>{rows.map((r) => (
               <tr key={r.id} className="hover:bg-bg">
-                <Td><Link href={`/projects/${r.id}`} className="font-medium text-brand">{r.project_number}</Link></Td>
+                <Td><Link href={`/projects/${r.id}`} className="font-mono text-xs font-semibold text-brand">{r.project_number}</Link></Td>
                 <Td>{r.name}</Td><Td className="text-muted">{r.company ?? '—'}</Td>
                 <Td><div className="flex items-center gap-2"><div className="h-1.5 w-24 overflow-hidden rounded-full bg-line"><div className="h-full bg-brand" style={{ width: `${num(r.progress_pct)}%` }} /></div><span className="text-xs">{num(r.progress_pct)}%</span></div></Td>
                 <Td><StatusPill status={r.status} /></Td><Td className="text-xs text-faint">{fmtDate(r.end_date)}</Td>

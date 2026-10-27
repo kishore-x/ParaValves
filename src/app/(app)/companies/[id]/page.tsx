@@ -88,7 +88,7 @@ function RelatedTable({ title, rows, base, numKey }: { title: string; rows: any[
           <thead><tr><Th>Number</Th><Th>Status</Th><Th>Total</Th></tr></thead>
           <tbody>{rows.map((r) => (
             <tr key={r.id} className="hover:bg-bg">
-              <Td><Link href={base + r.id} className="font-medium text-brand">{r[numKey]}</Link></Td>
+              <Td><Link href={base + r.id} className="font-mono text-xs font-semibold text-brand">{r[numKey]}</Link></Td>
               <Td><StatusPill status={r.status} /></Td>
               <Td>{formatMoney(r.grand_total ?? 0)}</Td>
             </tr>

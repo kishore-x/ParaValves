@@ -27,7 +27,7 @@ export default async function ProductionPage({ searchParams }: { searchParams: P
         {rows.length === 0 ? <EmptyState title="No work orders" hint="Create one below from a sales order." /> : (
           <Table><thead><tr><Th>WO</Th><Th>Product</Th><Th>Order</Th><Th>Qty</Th><Th>Progress</Th><Th>Due</Th><Th>Status</Th></tr></thead>
             <tbody>{rows.map((w: any) => (
-              <tr key={w.id} className="hover:bg-bg"><Td><Link href={`/production/${w.id}`} className="font-medium text-brand">{w.wo_number}</Link></Td><Td>{w.pname}</Td><Td>{w.order_number ?? '—'}</Td><Td>{Number(w.quantity)}</Td>
+              <tr key={w.id} className="hover:bg-bg"><Td><Link href={`/production/${w.id}`} className="font-mono text-xs font-semibold text-brand">{w.wo_number}</Link></Td><Td>{w.pname}</Td><Td>{w.order_number ?? '—'}</Td><Td>{Number(w.quantity)}</Td>
                 <Td><div className="flex items-center gap-2"><div className="h-1.5 w-24 rounded bg-bg ring-1 ring-line"><div className="h-full rounded bg-brand" style={{ width: `${w.total_ops ? (w.done_ops / w.total_ops) * 100 : 0}%` }} /></div><span className="text-2xs text-muted">{w.done_ops}/{w.total_ops} ops</span></div></Td>
                 <Td className="text-xs">{fmtDate(w.due_date)}</Td><Td><StatusPill status={w.status} /></Td></tr>))}</tbody></Table>)}
       </Card>

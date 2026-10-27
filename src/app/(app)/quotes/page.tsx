@@ -20,7 +20,7 @@ export default async function QuotesPage() {
             <thead><tr><Th>Quote #</Th><Th>Customer</Th><Th>Status</Th><Th>Total</Th><Th>Created</Th></tr></thead>
             <tbody>{rows.map((r) => (
               <tr key={r.id} className="hover:bg-bg">
-                <Td><Link href={`/quotes/${r.id}`} className="font-medium text-brand">{r.quote_number}</Link></Td>
+                <Td><Link href={`/quotes/${r.id}`} className="font-mono text-xs font-semibold text-brand">{r.quote_number}</Link></Td>
                 <Td>{r.company}</Td><Td><StatusPill status={r.status} /></Td>
                 <Td>{formatMoney(r.grand_total, r.currency)}</Td><Td className="text-xs text-faint">{fmtDate(r.created_at)}</Td>
               </tr>

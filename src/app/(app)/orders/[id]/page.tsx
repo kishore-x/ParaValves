@@ -87,7 +87,7 @@ export default async function OrderDetail({ params }: { params: Promise<{ id: st
             )}
             {totalShortage > 0 && (
               <div className="border-t border-line p-4 text-sm">
-                <p className="text-warn">⚠ {totalShortage} units short. <Link href="/procurement/new" className="font-medium text-brand">Raise a purchase order →</Link></p>
+                <p className="text-warn">⚠ {totalShortage} units short. <Link href="/procurement/new" className="font-mono text-xs font-semibold text-brand">Raise a purchase order →</Link></p>
               </div>
             )}
           </Card>

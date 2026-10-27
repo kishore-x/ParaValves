@@ -36,7 +36,7 @@ export default async function CostingPage() {
         <CardHeader title="Work order cost sheet" />
         <Table><thead><tr><Th>WO</Th><Th>Product</Th><Th>Status</Th><Th>Material</Th><Th>Labour</Th><Th>Subcontract</Th><Th>Scrap</Th><Th>Overhead</Th><Th>Plan</Th><Th>Actual</Th><Th>Var.</Th></tr></thead>
           <tbody>{rows.map((w: any) => { const plan = Number(w.pm) + Number(w.pl) + Number(w.ps) + Number(w.po); const act = Number(w.am) + Number(w.al) + Number(w.asub) + Number(w.ascr) + Number(w.ao); const v = act - plan; const done = w.status === 'COMPLETED'; return (
-            <tr key={w.id}><Td><Link href={`/production/${w.id}`} className="font-medium text-brand">{w.wo_number}</Link></Td><Td>{w.pname}</Td><Td><StatusPill status={w.status} /></Td>
+            <tr key={w.id}><Td><Link href={`/production/${w.id}`} className="font-mono text-xs font-semibold text-brand">{w.wo_number}</Link></Td><Td>{w.pname}</Td><Td><StatusPill status={w.status} /></Td>
               <Td className="text-xs">{formatMoney(w.am)}<div className="text-faint">/{formatMoney(w.pm)}</div></Td><Td className="text-xs">{formatMoney(w.al)}<div className="text-faint">/{formatMoney(w.pl)}</div></Td><Td className="text-xs">{formatMoney(w.asub)}<div className="text-faint">/{formatMoney(w.ps)}</div></Td>
               <Td className="text-xs">{formatMoney(w.ascr)}</Td><Td className="text-xs">{formatMoney(w.ao)}<div className="text-faint">/{formatMoney(w.po)}</div></Td>
               <Td>{formatMoney(plan)}</Td><Td className="font-medium">{formatMoney(act)}</Td><Td className={done && v > 0 ? 'font-semibold text-danger' : done ? 'font-semibold text-ok' : 'text-faint'}>{done ? formatMoney(v) : 'in progress'}</Td></tr>); })}</tbody></Table>

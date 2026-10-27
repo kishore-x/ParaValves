@@ -20,7 +20,7 @@ export default async function ProcurementPage() {
             <thead><tr><Th>PO #</Th><Th>Supplier</Th><Th>Status</Th><Th>Total</Th><Th>Expected</Th></tr></thead>
             <tbody>{rows.map((r) => (
               <tr key={r.id} className="hover:bg-bg">
-                <Td><Link href={`/procurement/${r.id}`} className="font-medium text-brand">{r.po_number}</Link></Td>
+                <Td><Link href={`/procurement/${r.id}`} className="font-mono text-xs font-semibold text-brand">{r.po_number}</Link></Td>
                 <Td>{r.supplier}</Td><Td><StatusPill status={r.status} /></Td>
                 <Td>{formatMoney(r.grand_total)}</Td><Td className="text-xs text-faint">{fmtDate(r.expected_date)}</Td>
               </tr>

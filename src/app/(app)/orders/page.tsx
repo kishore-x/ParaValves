@@ -20,7 +20,7 @@ export default async function OrdersPage() {
             <thead><tr><Th>Order #</Th><Th>Customer</Th><Th>Status</Th><Th>Total</Th><Th>Delivery</Th></tr></thead>
             <tbody>{rows.map((r) => (
               <tr key={r.id} className="hover:bg-bg">
-                <Td><Link href={`/orders/${r.id}`} className="font-medium text-brand">{r.order_number}</Link></Td>
+                <Td><Link href={`/orders/${r.id}`} className="font-mono text-xs font-semibold text-brand">{r.order_number}</Link></Td>
                 <Td>{r.company}</Td><Td><StatusPill status={r.status} /></Td>
                 <Td>{formatMoney(r.grand_total, r.currency)}</Td><Td className="text-xs text-faint">{fmtDate(r.delivery_date)}</Td>
               </tr>

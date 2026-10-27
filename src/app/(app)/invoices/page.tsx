@@ -26,7 +26,7 @@ export default async function InvoicesPage() {
             <thead><tr><Th>Invoice #</Th><Th>Customer</Th><Th>Status</Th><Th>Total</Th><Th>Paid</Th><Th>Due</Th></tr></thead>
             <tbody>{rows.map((r) => (
               <tr key={r.id} className="hover:bg-bg">
-                <Td><Link href={`/invoices/${r.id}`} className="font-medium text-brand">{r.invoice_number}</Link></Td>
+                <Td><Link href={`/invoices/${r.id}`} className="font-mono text-xs font-semibold text-brand">{r.invoice_number}</Link></Td>
                 <Td>{r.company}</Td><Td><StatusPill status={r.status} /></Td>
                 <Td>{formatMoney(r.grand_total, r.currency)}</Td><Td>{formatMoney(r.paid_amount, r.currency)}</Td>
                 <Td className="text-xs text-faint">{fmtDate(r.due_date)}</Td>

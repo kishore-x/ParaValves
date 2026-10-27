@@ -21,7 +21,7 @@ export default async function SuppliersPage({ searchParams }: { searchParams: Pr
         <CardHeader title={`Supplier register (${rows.length})`} />
         <Table><thead><tr><Th>Supplier</Th><Th>Location</Th><Th>Rating</Th><Th>POs</Th><Th>Lots (rejected)</Th><Th>Approval</Th><Th>Change</Th></tr></thead>
           <tbody>{rows.map((s: any) => (
-            <tr key={s.id}><Td><Link href={`/companies/${s.id}`} className="font-medium text-brand">{s.name}</Link></Td><Td className="text-xs">{[s.city, s.country].filter(Boolean).join(', ')}</Td><Td>{s.supplier_rating ? `${Number(s.supplier_rating).toFixed(1)} / 5` : '—'}</Td><Td>{s.pos}</Td><Td>{s.lots} ({s.rejected_lots})</Td><Td><StatusPill status={s.approval_status} /></Td>
+            <tr key={s.id}><Td><Link href={`/companies/${s.id}`} className="font-medium text-brand hover:underline">{s.name}</Link></Td><Td className="text-xs">{[s.city, s.country].filter(Boolean).join(', ')}</Td><Td>{s.supplier_rating ? `${Number(s.supplier_rating).toFixed(1)} / 5` : '—'}</Td><Td>{s.pos}</Td><Td>{s.lots} ({s.rejected_lots})</Td><Td><StatusPill status={s.approval_status} /></Td>
               <Td><form action={toggleSupplierAction} className="flex gap-1"><input type="hidden" name="id" value={s.id} /><select name="status" defaultValue={s.approval_status} className={`${inputCls} !h-8 !w-32`}><option>APPROVED</option><option>CONDITIONAL</option><option>BLOCKED</option></select><Button type="submit" size="sm" variant="ghost">Set</Button></form></Td></tr>))}</tbody></Table>
       </Card>
     </div>

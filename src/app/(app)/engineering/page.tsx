@@ -21,7 +21,7 @@ export default async function EngineeringPage() {
                 <thead><tr><Th>Drawing #</Th><Th>Title</Th><Th>Rev</Th><Th>Status</Th><Th>Created</Th></tr></thead>
                 <tbody>{drawings.map((d) => (
                   <tr key={d.id} className="hover:bg-bg">
-                    <Td><Link href={`/engineering/${d.id}`} className="font-medium text-brand">{d.drawing_number}</Link></Td>
+                    <Td><Link href={`/engineering/${d.id}`} className="font-mono text-xs font-semibold text-brand">{d.drawing_number}</Link></Td>
                     <Td>{d.title}</Td><Td>R{d.current_revision}</Td><Td><StatusPill status={d.status} /></Td>
                     <Td className="text-xs text-faint">{fmtDate(d.created_at)}</Td>
                   </tr>

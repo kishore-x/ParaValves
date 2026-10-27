@@ -21,7 +21,7 @@ export default async function CompaniesPage({ searchParams }: { searchParams: Pr
             <tbody>
               {rows.map((r) => (
                 <tr key={r.id} className="hover:bg-bg">
-                  <Td><Link href={`/companies/${r.id}`} className="font-medium text-brand">{r.company_number}</Link></Td>
+                  <Td><Link href={`/companies/${r.id}`} className="font-mono text-xs font-semibold text-brand">{r.company_number}</Link></Td>
                   <Td>{r.name}</Td>
                   <Td className="text-muted">{[r.is_customer && 'Customer', r.is_supplier && 'Supplier'].filter(Boolean).join(', ')}</Td>
                   <Td>{r.city ?? '—'}</Td>

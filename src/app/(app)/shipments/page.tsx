@@ -26,7 +26,7 @@ export default async function ShipmentsPage({ searchParams }: { searchParams: Pr
         {rows.length === 0 ? <EmptyState title="No shipments" /> : (
           <Table><thead><tr><Th>Shipment</Th><Th>Order</Th><Th>Customer</Th><Th>Units</Th><Th>Type</Th><Th>Status</Th><Th>Shipped</Th></tr></thead>
             <tbody>{rows.map((s: any) => (
-              <tr key={s.id} className="hover:bg-bg align-top"><Td><Link href={`/shipments/${s.id}`} className="font-medium text-brand">{s.shipment_number}</Link></Td><Td>{s.order_number}</Td><Td>{s.customer}</Td><Td>{s.units}</Td>
+              <tr key={s.id} className="hover:bg-bg align-top"><Td><Link href={`/shipments/${s.id}`} className="font-mono text-xs font-semibold text-brand">{s.shipment_number}</Link></Td><Td>{s.order_number}</Td><Td>{s.customer}</Td><Td>{s.units}</Td>
                 <Td>{s.is_partial ? <Badge tone="warn">partial</Badge> : <Badge>full</Badge>}</Td><Td><StatusPill status={s.status} />{s.block_reason && <div className="mt-1 max-w-md text-2xs text-danger">{s.block_reason}</div>}</Td><Td className="text-xs">{fmtDate(s.shipped_at)}</Td></tr>))}</tbody></Table>)}
       </Card>
       <Card>

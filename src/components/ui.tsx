@@ -10,7 +10,7 @@ export function CardHeader({ title, subtitle, action }: { title: ReactNode; subt
   return (
     <div className="flex items-center justify-between gap-3 border-b border-line px-5 py-4">
       <div className="min-w-0">
-        <h2 className="truncate text-sm font-semibold text-ink">{title}</h2>
+        <h2 className="truncate text-base font-semibold tracking-tight text-ink">{title}</h2>
         {subtitle && <p className="mt-0.5 text-xs text-muted">{subtitle}</p>}
       </div>
       {action && <div className="shrink-0">{action}</div>}
@@ -163,15 +163,43 @@ export function EmptyState({ title, hint, action, icon = 'inbox' }: { title: str
 }
 
 /* ── Page header ──────────────────────────────────────────────────────── */
-export function PageHeader({ title, subtitle, action }: { title: string; subtitle?: ReactNode; action?: ReactNode }) {
+export function PageHeader({ title, subtitle, action, eyebrow }: { title: string; subtitle?: ReactNode; action?: ReactNode; eyebrow?: string }) {
   return (
-    <div className="mb-6 flex flex-wrap items-start justify-between gap-3">
+    <div className="mb-6 flex flex-wrap items-end justify-between gap-3">
       <div className="min-w-0">
-        <h1 className="text-lg font-semibold tracking-tight text-ink">{title}</h1>
+        {eyebrow && <p className="mb-1 text-2xs font-semibold uppercase tracking-[0.18em] text-faint">{eyebrow}</p>}
+        <h1 className="text-2xl font-semibold tracking-tight text-ink">{title}</h1>
         {subtitle && <p className="mt-1 text-sm text-muted">{subtitle}</p>}
       </div>
       {action && <div className="flex shrink-0 items-center gap-2">{action}</div>}
     </div>
+  );
+}
+
+/* ── Filter chip ──────────────────────────────────────────────────────── */
+export function Chip({ href, active, children, count }: { href: string; active?: boolean; children: ReactNode; count?: ReactNode }) {
+  return (
+    <Link
+      href={href}
+      className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs font-medium transition-colors ${
+        active ? 'border-brand bg-brand text-brand-ink shadow-sm' : 'border-line bg-surface text-muted hover:border-line-strong hover:text-ink'
+      }`}
+    >
+      {children}
+      {count !== undefined && <span className={`tnum text-2xs font-semibold ${active ? 'text-brand-ink/80' : 'text-faint'}`}>{count}</span>}
+    </Link>
+  );
+}
+
+/* ── Priority tag ─────────────────────────────────────────────────────── */
+const PRIORITY_TONE: Record<string, keyof typeof TONE_CLS> = { URGENT: 'danger', HIGH: 'warn', NORMAL: 'muted', LOW: 'muted' };
+export function PriorityTag({ priority }: { priority: string }) {
+  const tone = PRIORITY_TONE[priority] ?? 'muted';
+  return (
+    <span className={`inline-flex items-center gap-1 rounded-md px-1.5 py-0.5 text-2xs font-semibold uppercase tracking-wide ring-1 ring-inset ${TONE_CLS[tone]}`}>
+      {(priority === 'HIGH' || priority === 'URGENT') && <span className="h-1 w-1 rounded-full bg-current" />}
+      {priority}
+    </span>
   );
 }
 

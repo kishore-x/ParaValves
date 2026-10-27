@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import { requireUser } from '@/server/auth/action';
 import { query } from '@/server/db';
-import { Card, Table, Th, Td, StatusPill, PageHeader, Button, EmptyState } from '@/components/ui';
+import { Card, Table, Th, Td, StatusPill, PageHeader, Button, EmptyState, Chip, PriorityTag, Avatar } from '@/components/ui';
 import { fromNow, fmtDate } from '@/lib/format';
 import { formatMoney } from '@/lib/money';
 
@@ -29,11 +29,9 @@ export default async function LeadsPage({ searchParams }: { searchParams: Promis
       <PageHeader title="Leads" subtitle="Incoming demand and sales pipeline" action={<><Button href="/leads/board" variant="ghost" icon="dashboard">Board</Button><Button href="/leads/new" icon="plus">New Lead</Button></>} />
 
       <div className="mb-4 flex flex-wrap gap-2">
-        <Link href="/leads" className={`rounded-lg border px-3 py-1.5 text-xs ${!status ? 'border-brand bg-brand/10 text-brand' : 'border-line text-muted hover:text-ink'}`}>All</Link>
+        <Chip href="/leads" active={!status}>All</Chip>
         {PIPELINE.map((s) => (
-          <Link key={s} href={`/leads?status=${s}`} className={`rounded-lg border px-3 py-1.5 text-xs ${status === s ? 'border-brand bg-brand/10 text-brand' : 'border-line text-muted hover:text-ink'}`}>
-            {s.replace(/_/g, ' ')} <span className="ml-1 opacity-60">{countMap[s] ?? 0}</span>
-          </Link>
+          <Chip key={s} href={`/leads?status=${s}`} active={status === s} count={countMap[s] ?? 0}>{s.replace(/_/g, ' ')}</Chip>
         ))}
       </div>
 
@@ -48,11 +46,16 @@ export default async function LeadsPage({ searchParams }: { searchParams: Promis
             <tbody>
               {leads.map((l) => (
                 <tr key={l.id} className="hover:bg-bg">
-                  <Td><Link href={`/leads/${l.id}`} className="font-medium text-brand">{l.lead_number}</Link></Td>
-                  <Td>{l.company_name}</Td>
-                  <Td className="text-muted">{l.owner ?? 'Unassigned'}</Td>
-                  <Td>{l.priority}</Td>
-                  <Td>{l.expected_value ? formatMoney(l.expected_value) : '—'}</Td>
+                  <Td><Link href={`/leads/${l.id}`} className="font-mono text-xs font-semibold text-brand">{l.lead_number}</Link></Td>
+                  <Td className="font-medium">{l.company_name}</Td>
+                  <Td>
+                    <span className="flex items-center gap-2 text-muted">
+                      {l.owner ? <Avatar name={l.owner} size={22} /> : null}
+                      {l.owner ?? 'Unassigned'}
+                    </span>
+                  </Td>
+                  <Td><PriorityTag priority={l.priority} /></Td>
+                  <Td className="tnum">{l.expected_value ? formatMoney(l.expected_value) : '—'}</Td>
                   <Td><StatusPill status={l.status} /></Td>
                   <Td className="text-xs text-faint">{fromNow(l.created_at)}</Td>
                 </tr>

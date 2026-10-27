@@ -35,7 +35,7 @@ export default async function AssemblyPage({ searchParams }: { searchParams: Pro
         <CardHeader title={`Serialised units (${units.length})`} />
         <Table><thead><tr><Th>Serial</Th><Th>Tag</Th><Th>Product</Th><Th>WO</Th><Th>Order</Th><Th>As-built rev</Th><Th>Status</Th></tr></thead>
           <tbody>{units.map((u: any) => (
-            <tr key={u.id} className="hover:bg-bg"><Td><Link href={`/assembly/${u.id}`} className="font-medium text-brand">{u.serial_number}</Link></Td><Td>{u.tag_number ?? '—'}</Td><Td>{u.pname}</Td><Td>{u.wo_number ?? '—'}</Td><Td>{u.order_number ?? '—'}</Td><Td className="text-xs">{u.drawing_revision ?? '—'}</Td><Td><StatusPill status={u.status} /></Td></tr>))}</tbody></Table>
+            <tr key={u.id} className="hover:bg-bg"><Td><Link href={`/assembly/${u.id}`} className="font-mono text-xs font-semibold text-brand">{u.serial_number}</Link></Td><Td>{u.tag_number ?? '—'}</Td><Td>{u.pname}</Td><Td>{u.wo_number ?? '—'}</Td><Td>{u.order_number ?? '—'}</Td><Td className="text-xs">{u.drawing_revision ?? '—'}</Td><Td><StatusPill status={u.status} /></Td></tr>))}</tbody></Table>
       </Card>
     </div>
   );
