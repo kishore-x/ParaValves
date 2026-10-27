@@ -93,17 +93,12 @@ export default async function LoginPage({ searchParams }: { searchParams: Promis
             </label>
             <label className="block">
               <span className="mb-1.5 block text-xs font-medium text-muted">Password</span>
-              <input name="password" type="password" required defaultValue="admin123" className={inputCls} />
+              <input name="password" type="password" required autoComplete="current-password" className={inputCls} />
             </label>
             <button type="submit" className="mt-2 flex h-10 w-full items-center justify-center gap-2 rounded-lg bg-brand text-sm font-semibold text-brand-ink shadow-sm transition-all hover:bg-brand-strong active:scale-[.99]">
               Sign in <Icon name="arrowRight" size={16} />
             </button>
           </form>
-          <div className="mt-6 rounded-lg border border-line bg-surface p-3 text-xs text-muted">
-            <p className="font-medium text-ink">Demo accounts</p>
-            <p className="mt-1">admin@paravalves.com · admin123 <span className="text-faint">(Super Admin)</span></p>
-            <p>sales@paravalves.com · sales123 <span className="text-faint">(Sales)</span></p>
-          </div>
         </div>
       </div>
     </div>
