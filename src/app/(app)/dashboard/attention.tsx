@@ -3,11 +3,6 @@ import Link from 'next/link';
 import { useState } from 'react';
 import { Icon } from '@/components/icons';
 import { EmptyState } from '@/components/ui';
-import { Photo, type PhotoName } from '@/components/photo';
-
-const TILE: Record<string, PhotoName> = {
-  leads: 'sparks', quotes: 'blueprint', drawings: 'valve', projects: 'warehouse',
-};
 
 export type AttentionItem = { id: string; n: string; label: string; owner?: string | null; age?: string };
 export type AttentionGroup = { key: string; label: string; icon: string; base: string; items: AttentionItem[] };
@@ -48,26 +43,24 @@ export function AttentionPanel({ groups }: { groups: AttentionGroup[] }) {
       ) : (
         <div>
           {visible.map((g) => (
-            <div key={g.key} className="flex gap-4 border-b border-line px-5 py-4 last:border-0">
-              <Photo name={TILE[g.key] ?? 'valve'} alt="" className="hidden h-[72px] w-[88px] shrink-0 rounded-xl sm:block" />
-              <div className="min-w-0 flex-1">
-                <p className="mb-1.5 flex items-center gap-2 text-sm font-semibold text-ink">
-                  {g.label}
-                  <span className="inline-flex h-4 min-w-4 items-center justify-center rounded bg-bg px-1 text-2xs font-semibold text-muted ring-1 ring-inset ring-line">{g.items.length}</span>
-                </p>
-                <ul className="-mx-2">
-                  {g.items.map((it) => (
-                    <li key={it.id}>
-                      <Link href={g.base + it.id} className="group flex items-center gap-3 rounded-lg px-2 py-1.5 hover:bg-bg">
-                        <span className="font-mono text-xs font-semibold text-brand">{it.n}</span>
-                        {it.label && <span className="truncate text-sm text-muted">· {it.label}</span>}
-                        {it.age && <span className="ml-auto shrink-0 text-xs text-faint">{it.age}</span>}
-                        <Icon name="arrowRight" size={14} className="shrink-0 text-faint opacity-0 transition-opacity group-hover:opacity-100" />
-                      </Link>
-                    </li>
-                  ))}
-                </ul>
-              </div>
+            <div key={g.key}>
+              <p className="flex items-center gap-2 bg-bg/50 px-5 py-2 text-sm font-semibold text-ink">
+                {g.label}
+                <span className="inline-flex h-4 min-w-4 items-center justify-center rounded bg-surface px-1 text-2xs font-semibold text-muted ring-1 ring-inset ring-line">{g.items.length}</span>
+              </p>
+              <ul>
+                {g.items.map((it) => (
+                  <li key={it.id}>
+                    <Link href={g.base + it.id} className="group flex items-center gap-3 border-b border-line px-5 py-3 last:border-0 hover:bg-bg">
+                      <Icon name="file" size={15} className="shrink-0 text-faint" />
+                      <span className="font-mono text-xs font-semibold text-brand underline-offset-2 group-hover:underline">{it.n}</span>
+                      {it.label && <span className="truncate text-sm text-ink">{it.label}</span>}
+                      {it.age && <span className="ml-auto shrink-0 text-xs text-faint">{it.age}</span>}
+                      <Icon name="chevronRight" size={15} className="shrink-0 text-faint" />
+                    </Link>
+                  </li>
+                ))}
+              </ul>
             </div>
           ))}
         </div>

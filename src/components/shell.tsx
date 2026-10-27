@@ -89,12 +89,9 @@ function SidebarContent() {
         </div>
       </div>
       <nav className="flex-1 overflow-y-auto px-3 pb-4">
-        {NAV.map((g, gi) => (
+        {NAV.map((g) => (
           <div key={g.group} className="mb-5">
-            <p className="flex items-center justify-between px-3 pb-1.5 text-2xs font-semibold uppercase tracking-wider text-faint">
-              <span>{g.group}</span>
-              <span className="tnum text-faint/70">{String(gi + 1).padStart(2, '0')}</span>
-            </p>
+            <p className="px-3 pb-1.5 text-2xs font-semibold uppercase tracking-wider text-faint">{g.group}</p>
             <div className="space-y-0.5">
               {g.items.map((it) => {
                 const active = pathname === it.href || pathname.startsWith(it.href + '/');
@@ -155,7 +152,7 @@ export function Shell({ userName, orgName, notifCount, children }: { userName: s
           <button onClick={() => setOpen(true)} className="rounded-lg p-1.5 text-muted hover:bg-bg md:hidden" aria-label="Menu"><Icon name="menu" /></button>
           <form action="/search" method="get" className="relative hidden max-w-md flex-1 sm:block">
             <Icon name="search" size={16} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-faint" />
-            <input name="q" placeholder="Search everything…" className="h-9 w-full rounded-lg border border-line bg-bg pl-9 pr-16 text-sm outline-none transition-colors hover:border-line-strong focus:border-brand focus:bg-surface" />
+            <input name="q" placeholder="Search leads, orders, drawings, products…" className="h-9 w-full rounded-lg border border-line bg-bg pl-9 pr-16 text-sm outline-none transition-colors hover:border-line-strong focus:border-brand focus:bg-surface" />
             <kbd className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 rounded border border-line bg-surface px-1.5 py-0.5 text-2xs font-medium text-faint">⌘K</kbd>
           </form>
           <div className="ml-auto flex items-center gap-1.5 sm:gap-2.5">

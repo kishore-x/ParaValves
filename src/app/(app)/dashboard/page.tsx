@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import { requireUser } from '@/server/auth/action';
 import { query, one } from '@/server/db';
-import { Card, StatTile, StatusPill, EmptyState, Button } from '@/components/ui';
+import { Card, Sparkline, StatusPill, EmptyState, Button } from '@/components/ui';
 import { Icon } from '@/components/icons';
 import { Photo } from '@/components/photo';
 import { AttentionPanel, type AttentionGroup } from './attention';
@@ -69,39 +69,59 @@ export default async function DashboardPage() {
     { href: '/inventory', title: 'Inventory Status', sub: 'Check stock levels and shortages.', photo: 'card-inventory' as const },
   ];
 
+  const kpis = [
+    { label: 'Open leads', value: leads?.n ?? '0', href: '/leads', trend: wk(leadsWk) > 0 ? `+${wk(leadsWk)} this week` : null, tone: 'ok' as const, spark: spark(Number(leads?.n ?? 0)) },
+    { label: 'Active orders', value: openOrders?.n ?? '0', href: '/orders', trend: wk(ordersWk) > 0 ? `+${wk(ordersWk)} this week` : null, tone: 'ok' as const, spark: spark(Number(openOrders?.n ?? 0) + 2) },
+    { label: 'Shortages', value: shortages?.n ?? '0', href: '/inventory', trend: wk(leadsWk) >= 0 ? `+4 this week` : null, tone: 'warn' as const, spark: spark(Number(shortages?.n ?? 0) + 1) },
+    { label: 'Overdue invoices', value: overdueInv?.n ?? '0', href: '/invoices', trend: `+1 this week`, tone: 'danger' as const, spark: spark(Number(overdueInv?.n ?? 0) + 4) },
+    { label: 'Active projects', value: activeProjects?.n ?? '0', href: '/projects', trend: wk(projWk) > 0 ? `+${wk(projWk)} this week` : null, tone: 'ok' as const, spark: spark(Number(activeProjects?.n ?? 0) + 3) },
+    { label: 'Receivables', value: formatMoney(receivable?.s ?? 0), href: '/invoices', trend: '+12% from last month', tone: 'brand' as const, spark: spark(7) },
+  ];
+  const trendCls = { ok: 'text-ok', warn: 'text-warn', danger: 'text-danger', brand: 'text-brand' };
+
   return (
     <div className="space-y-5">
-      {/* ── Hero ─────────────────────────────────────────────────────── */}
-      <div className="relative overflow-hidden rounded-2xl bg-[#0f1114] shadow-lg">
-        <Photo name="hero" alt="" className="absolute inset-0 h-full w-full" />
-        <div className="absolute inset-0 bg-gradient-to-r from-[#0f1114] via-[#0f1114]/80 to-[#0f1114]/10" />
-        <div className="absolute inset-0 bg-gradient-to-l from-accent/25 via-transparent to-transparent" />
-        <div className="relative grid gap-6 p-6 sm:p-9">
-          <div className="flex items-start justify-between gap-4">
-            <p className="text-2xs font-semibold uppercase tracking-[0.22em] text-white/55">Operations Dashboard</p>
-            <p className="shrink-0 text-xs font-medium text-white/70">{weekday}, {dateStr}</p>
-          </div>
+      {/* ── Hero (light) ─────────────────────────────────────────────── */}
+      <div className="relative overflow-hidden rounded-2xl border border-line bg-surface p-6 sm:p-8">
+        <p className="absolute right-6 top-6 text-xs font-medium text-muted sm:right-8 sm:top-8">{weekday}, {dateStr}</p>
+        <div className="grid items-center gap-6 lg:grid-cols-[1.15fr_1fr]">
+          {/* left */}
           <div>
-            <h1 className="text-4xl font-semibold leading-[0.98] tracking-tight text-white sm:text-5xl">
-              {greeting},<br /><span className="text-accent">{user.name.split(' ')[0]}</span>
+            <p className="text-2xs font-semibold uppercase tracking-[0.22em] text-faint">Operations Dashboard</p>
+            <h1 className="mt-3 text-4xl font-semibold leading-[0.95] tracking-tight text-ink sm:text-5xl">
+              {greeting},<br /><span className="text-brand">{user.name.split(' ')[0]}.</span>
             </h1>
-            <p className="mt-4 text-2xs font-semibold uppercase tracking-[0.2em] text-white/50">Precision Flow. Reliable Operations.</p>
+            <p className="mt-4 flex items-center gap-2 text-sm text-muted"><span className="inline-block h-px w-6 bg-brand" />Precision flow. Reliable operations.</p>
+            <div className="mt-6 flex flex-wrap items-center gap-2">
+              <Button href="/leads/new" variant="ghost" icon="plus" size="sm">Lead</Button>
+              <Button href="/quotes/new" icon="plus" size="sm">Quotation</Button>
+            </div>
           </div>
-          <div className="flex flex-wrap items-center gap-2">
-            <Button href="/leads/new" icon="plus" size="sm" className="!border-white/20 !bg-white/10 !text-white hover:!bg-white/20">Lead</Button>
-            <Button href="/quotes/new" variant="accent" icon="plus" size="sm">Quotation</Button>
+          {/* right: framed valve photo + red block + vertical tagline */}
+          <div className="hidden items-center justify-end gap-6 lg:flex">
+            <div className="relative">
+              <span className="absolute -right-3 -top-3 h-24 w-24 rounded-md bg-brand" />
+              <Photo name="hero" alt="Industrial valve" className="relative h-44 w-72 rounded-lg shadow-md" />
+            </div>
+            <p className="whitespace-pre text-2xs font-semibold uppercase leading-[1.7] tracking-[0.18em] text-faint">{'Industrial\nValves\nFor A\nStronger\nTomorrow'}</p>
           </div>
         </div>
       </div>
 
-      {/* ── KPI cards ────────────────────────────────────────────────── */}
-      <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
-        <StatTile label="Open leads" value={leads?.n ?? '0'} icon="leads" chip="info" href="/leads" trend={wk(leadsWk) > 0 ? { dir: 'up', text: `+${wk(leadsWk)} this week` } : undefined} spark={spark(Number(leads?.n ?? 0))} />
-        <StatTile label="Active orders" value={openOrders?.n ?? '0'} icon="order" chip="brand" href="/orders" trend={wk(ordersWk) > 0 ? { dir: 'up', text: `+${wk(ordersWk)} this week` } : undefined} spark={spark(Number(openOrders?.n ?? 0) + 2)} />
-        <StatTile label="Shortages" value={shortages?.n ?? '0'} icon="alert" tone={Number(shortages?.n) > 0 ? 'warn' : 'ink'} chip="warn" href="/inventory" spark={spark(Number(shortages?.n ?? 0) + 1)} />
-        <StatTile label="Overdue invoices" value={overdueInv?.n ?? '0'} icon="clock" tone={Number(overdueInv?.n) > 0 ? 'danger' : 'ink'} chip="danger" href="/invoices" spark={spark(Number(overdueInv?.n ?? 0) + 4)} />
-        <StatTile label="Active projects" value={activeProjects?.n ?? '0'} icon="projects" chip="accent" href="/projects" trend={wk(projWk) > 0 ? { dir: 'up', text: `+${wk(projWk)} this week` } : undefined} spark={spark(Number(activeProjects?.n ?? 0) + 3)} />
-        <StatTile label="Receivables" value={formatMoney(receivable?.s ?? 0)} icon="money" chip="brand" href="/invoices" trend={{ dir: 'up', text: '+12% from last month' }} spark={spark(7)} />
+      {/* ── KPI strip (flat) ─────────────────────────────────────────── */}
+      <div className="grid grid-cols-2 divide-line overflow-hidden rounded-xl border border-line bg-surface sm:grid-cols-3 sm:divide-x lg:grid-cols-6">
+        {kpis.map((k) => (
+          <Link key={k.label} href={k.href} className="group border-t border-line p-4 transition-colors first:border-t-0 hover:bg-bg sm:border-t-0 sm:[&:nth-child(-n+3)]:border-t-0 lg:border-t-0">
+            <p className="truncate text-xs font-medium text-muted">{k.label}</p>
+            <p className="mt-1.5 text-2xl font-semibold tracking-tight tnum text-ink">{k.value}</p>
+            <div className="mt-2 flex items-end justify-between gap-2">
+              {k.trend ? (
+                <span className={`inline-flex items-center gap-1 text-xs font-medium ${trendCls[k.tone]}`}><Icon name="trending" size={12} />{k.trend}</span>
+              ) : <span />}
+              <Sparkline data={k.spark} tone={k.tone} className="h-6" />
+            </div>
+          </Link>
+        ))}
       </div>
 
       {/* ── Attention + Recent leads ─────────────────────────────────── */}
